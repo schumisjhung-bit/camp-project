@@ -21,10 +21,10 @@
       --tag-bg: #eef5ff;
       --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
       --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.1);
-      --danger-color: #ff4d4f; /* 警告紅字顏色 */
+      --danger-color: #ff4d4f;
+      --avatar-empty-bg: #e9ecef; /* 未上傳大頭貼時的底色 */
     }
 
-    /* 深色模式變數重寫 */
     [data-theme="dark"] {
       --bg-color: #121212;
       --card-bg: #1e1e1e;
@@ -41,9 +41,9 @@
       --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
       --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.5);
       --danger-color: #ff6b6b;
+      --avatar-empty-bg: #2a2a2a;
     }
 
-    /* 基礎樣式重置 */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -62,7 +62,6 @@
       line-height: 1.6;
     }
 
-    /* 導覽列 */
     header {
       position: fixed;
       top: 0;
@@ -114,7 +113,6 @@
       color: var(--primary-color);
     }
 
-    /* 工具按鈕與下拉選單 */
     .icon-btn, .lang-select {
       background: none;
       border: 1px solid var(--input-border);
@@ -141,7 +139,6 @@
       color: var(--title-color);
     }
 
-    /* 頁面通用區塊 */
     section {
       padding: 6rem 2rem 4rem;
       max-width: 1000px;
@@ -170,12 +167,12 @@
       border-radius: 2px;
     }
 
-    /* 首頁 / 個人簡介區 */
     #hero {
       text-align: center;
       align-items: center;
     }
 
+    /* === 大頭貼樣式與加號設計 === */
     .avatar-container {
       position: relative;
       width: 160px;
@@ -185,15 +182,55 @@
       overflow: hidden;
       border-radius: 50%;
       box-shadow: var(--shadow-sm);
-      border: 3px solid var(--card-bg);
+      border: 3px dashed var(--input-border);
+      background-color: var(--avatar-empty-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    /* 當未上傳圖片時顯示的加號 (+號) */
+    .avatar-plus-icon {
+      font-size: 3.5rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      line-height: 1;
+      user-select: none;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .avatar-container:hover .avatar-plus-icon {
+      transform: scale(1.15);
+      color: var(--primary-color);
+    }
+
+    .avatar-container:hover {
+      border-color: var(--primary-color);
+    }
+
+    /* 已上傳圖片時的樣式 */
+    .avatar-container.has-image {
+      border-style: solid;
+      border-color: var(--card-bg);
+    }
+
+    .avatar-container.has-image .avatar-plus-icon {
+      display: none; /* 有圖片時隱藏加號 */
     }
 
     .avatar-preview {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: none; /* 預設隱藏，上傳後顯示 */
     }
 
+    .avatar-container.has-image .avatar-preview {
+      display: block;
+    }
+
+    /* 懸停時遮罩 */
     .avatar-upload-overlay {
       position: absolute;
       top: 0;
@@ -209,6 +246,7 @@
       opacity: 0;
       transition: opacity 0.3s ease;
       font-weight: 500;
+      border-radius: 50%;
     }
 
     .avatar-container:hover .avatar-upload-overlay {
@@ -231,7 +269,6 @@
       max-width: 600px;
     }
 
-    /* 作品區樣式 */
     .portfolio-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -286,7 +323,6 @@
       margin-bottom: 1rem;
     }
 
-    /* 標籤區塊樣式 */
     .tags-container {
       margin-top: auto;
       padding-top: 1rem;
@@ -322,7 +358,6 @@
       min-height: 1.5em;
     }
 
-    /* 聯絡表單區樣式 */
     .contact-form {
       background: var(--card-bg);
       padding: 2.5rem;
@@ -364,13 +399,12 @@
       border-color: var(--primary-color);
     }
 
-    /* 紅字警告訊息樣式 */
     .error-msg {
       color: var(--danger-color) !important;
       font-size: 0.85rem;
       font-weight: 600;
       margin-top: 0.4rem;
-      display: none; /* 預設隱藏 */
+      display: none;
     }
 
     input.invalid-input {
@@ -394,7 +428,6 @@
       background-color: var(--primary-hover);
     }
 
-    /* 設定彈出視窗 */
     dialog.settings-modal {
       border: 1px solid var(--border-color);
       border-radius: 12px;
@@ -479,7 +512,6 @@
           <li><a href="#contact" data-i18n="nav_contact">聯絡我</a></li>
         </ul>
         
-        <!-- 多語言切換選單 -->
         <select id="lang-select" class="lang-select">
           <option value="zh-TW">繁體中文</option>
           <option value="zh-CN">简体中文</option>
@@ -488,7 +520,6 @@
           <option value="ko">한국어</option>
         </select>
 
-        <!-- 主題與設定 -->
         <button type="button" class="icon-btn" id="theme-toggle" title="切換深淺色模式">
           <span id="theme-icon">🌙</span> <span id="theme-text" data-i18n="theme_dark">深色</span>
         </button>
@@ -501,8 +532,10 @@
 
   <!-- 首頁 / 個人簡介 -->
   <section id="hero">
-    <div class="avatar-container" id="avatar-container" title="點擊更換頭像">
-      <img src="https://via.placeholder.com/160?text=Click+to+Upload" alt="大頭貼" class="avatar-preview" id="avatar-preview">
+    <!-- 大頭貼區域（帶加號預設狀態） -->
+    <div class="avatar-container" id="avatar-container" title="點擊上傳頭像">
+      <span class="avatar-plus-icon">+</span>
+      <img src="" alt="大頭貼" class="avatar-preview" id="avatar-preview">
       <div class="avatar-upload-overlay" data-i18n="avatar_overlay">更換頭像</div>
     </div>
     <input type="file" id="avatar-input" accept="image/*">
@@ -516,7 +549,6 @@
     <h2 class="section-title" data-i18n="title_portfolio">作品區</h2>
     <div class="portfolio-grid">
       
-      <!-- 作品 1 -->
       <article class="portfolio-card">
         <h3 class="editable" contenteditable="true" data-key="project_title_1" data-i18n="project_1_title">作品名稱 A</h3>
         <p class="editable" contenteditable="true" data-key="project_desc_1" data-i18n="project_1_desc">作品簡述與使用的技術。點擊此處可自由打字編輯。</p>
@@ -528,7 +560,6 @@
         </div>
       </article>
 
-      <!-- 作品 2 -->
       <article class="portfolio-card">
         <h3 class="editable" contenteditable="true" data-key="project_title_2" data-i18n="project_2_title">作品名稱 B</h3>
         <p class="editable" contenteditable="true" data-key="project_desc_2" data-i18n="project_2_desc">專案背景與獲得的成果。點擊此處可自由打字編輯。</p>
@@ -540,7 +571,6 @@
         </div>
       </article>
 
-      <!-- 作品 3 -->
       <article class="portfolio-card">
         <h3 class="editable" contenteditable="true" data-key="project_title_3" data-i18n="project_3_title">作品名稱 C</h3>
         <p class="editable" contenteditable="true" data-key="project_desc_3" data-i18n="project_3_desc">其他相關專案說明。點擊此處可自由打字編輯。</p>
@@ -595,14 +625,11 @@
     </form>
   </dialog>
 
-  <!-- 頁尾 -->
   <footer>
     <p>&copy; 2026 Your Name. All rights reserved.</p>
   </footer>
 
-  <!-- JavaScript 邏輯 -->
   <script>
-    // === 語言字典檔 (i18n Dictionary) ===
     const translations = {
       'zh-TW': {
         nav_about: '關於我', nav_portfolio: '作品集', nav_contact: '聯絡我',
@@ -676,7 +703,6 @@
       }
     };
 
-    // DOM 元素
     const langSelect = document.getElementById('lang-select');
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
@@ -700,27 +726,22 @@
     const inputName = document.getElementById('input-name');
     const inputBio = document.getElementById('input-bio');
 
-    // === 語言切換邏輯 ===
     function setLanguage(lang) {
       const dict = translations[lang] || translations['zh-TW'];
       
-      // 更新帶有 data-i18n 的普通文字元素
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        // 如果該欄位沒有被使用者自訂儲存過，才替換成語言檔內容
         const customKey = el.getAttribute('data-key');
         if (!customKey || !localStorage.getItem(customKey)) {
           if (dict[key]) el.textContent = dict[key];
         }
       });
 
-      // 更新帶有 data-i18n-ph 的 Placeholder 輸入框提示
       document.querySelectorAll('[data-i18n-ph]').forEach(el => {
         const key = el.getAttribute('data-i18n-ph');
         if (dict[key]) el.placeholder = dict[key];
       });
 
-      // 主題切換文字按鈕同步更新
       const currentTheme = document.documentElement.getAttribute('data-theme');
       themeText.textContent = currentTheme === 'dark' ? dict.theme_light : dict.theme_dark;
 
@@ -728,11 +749,8 @@
       langSelect.value = lang;
     }
 
-    langSelect.addEventListener('change', (e) => {
-      setLanguage(e.target.value);
-    });
+    langSelect.addEventListener('change', (e) => setLanguage(e.target.value));
 
-    // === 深淺色模式邏輯 ===
     function setTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('userTheme', theme);
@@ -751,11 +769,9 @@
 
     themeToggleBtn.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      setTheme(newTheme);
+      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
     });
 
-    // === 膠囊標籤渲染 ===
     function renderTagPills(editableElement) {
       const wrapperId = editableElement.getAttribute('data-wrapper');
       const wrapper = document.getElementById(wrapperId);
@@ -766,7 +782,6 @@
       wrapper.innerHTML = tags.map(tag => `<span class="tag-pill">#${tag}</span>`).join('');
     }
 
-    // === Email 格式驗證邏輯 (紅字即時提醒) ===
     if (emailInput && emailError) {
       const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
 
@@ -800,59 +815,47 @@
       }
     }
 
-    // === 頁面初始化：還原資料、語言與主題 ===
+    // 初始化頁面
     window.addEventListener('DOMContentLoaded', () => {
-      // 載入語言設定
-      const savedLang = localStorage.getItem('userLang') || 'zh-TW';
-      setLanguage(savedLang);
+      setLanguage(localStorage.getItem('userLang') || 'zh-TW');
+      setTheme(localStorage.getItem('userTheme') || 'light');
 
-      // 載入主題設定
-      const savedTheme = localStorage.getItem('userTheme') || 'light';
-      setTheme(savedTheme);
-
-      // 載入個人資料
       const savedName = localStorage.getItem('userName');
       const savedBio = localStorage.getItem('userBio');
       const savedAvatar = localStorage.getItem('userAvatar');
 
       if (savedName) displayName.textContent = savedName;
       if (savedBio) displayBio.textContent = savedBio;
-      if (savedAvatar) avatarPreview.src = savedAvatar;
+      
+      // 設定大頭貼圖片狀態
+      if (savedAvatar) {
+        avatarPreview.src = savedAvatar;
+        avatarContainer.classList.add('has-image');
+      } else {
+        avatarContainer.classList.remove('has-image');
+      }
 
-      // 還原作品集編輯內容
       document.querySelectorAll('.editable').forEach(element => {
         const key = element.getAttribute('data-key');
         const savedText = localStorage.getItem(key);
-        if (savedText) {
-          element.textContent = savedText;
-        }
-
-        if (element.classList.contains('tags-editable')) {
-          renderTagPills(element);
-        }
+        if (savedText) element.textContent = savedText;
+        if (element.classList.contains('tags-editable')) renderTagPills(element);
       });
     });
 
-    // === 可編輯區域儲存 ===
     document.querySelectorAll('.editable').forEach(element => {
       element.addEventListener('input', function() {
-        if (this.classList.contains('tags-editable')) {
-          renderTagPills(this);
-        }
+        if (this.classList.contains('tags-editable')) renderTagPills(this);
       });
 
       element.addEventListener('blur', function() {
         const key = this.getAttribute('data-key');
-        const content = this.textContent.trim();
-        localStorage.setItem(key, content);
-        
-        if (this.classList.contains('tags-editable')) {
-          renderTagPills(this);
-        }
+        localStorage.setItem(key, this.textContent.trim());
+        if (this.classList.contains('tags-editable')) renderTagPills(this);
       });
     });
 
-    // === 頭像上傳邏輯 ===
+    // 大頭貼上傳與切換顯示
     avatarContainer.addEventListener('click', () => avatarInput.click());
 
     avatarInput.addEventListener('change', function() {
@@ -867,26 +870,23 @@
         reader.addEventListener('load', function() {
           const base64Image = this.result;
           avatarPreview.src = base64Image;
+          avatarContainer.classList.add('has-image'); // 切換成有圖片的模式
           localStorage.setItem('userAvatar', base64Image);
         });
         reader.readAsDataURL(file);
       }
     });
 
-    // === 設定視窗邏輯 ===
     openSettingsBtn.addEventListener('click', () => {
       inputName.value = displayName.textContent.trim();
       inputBio.value = displayBio.textContent.trim();
       settingsModal.showModal();
     });
 
-    closeSettingsBtn.addEventListener('click', () => {
-      settingsModal.close();
-    });
+    closeSettingsBtn.addEventListener('click', () => settingsModal.close());
 
     settingsForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      
       const newName = inputName.value.trim();
       const newBio = inputBio.value.trim();
 
