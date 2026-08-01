@@ -521,9 +521,9 @@
           <span id="theme-icon">🌙</span> <span id="theme-text" data-i18n="theme_dark">深色</span>
         </button>
         
-        <!-- 按鈕圖示改為 👤，名稱改為「個人資料」 -->
+        <!-- 【關鍵修復 1】：純文字 + 👤 圖示，不帶容易被誤蓋的 class -->
         <button type="button" class="icon-btn" id="open-settings">
-          👤 <span data-i18n="btn_settings">個人資料</span>
+          👤 <span id="settings-btn-text">個人資料</span>
         </button>
       </div>
     </nav>
@@ -628,7 +628,7 @@
   </footer>
 
   <script>
-    // 語言字典已確保所有語言的 btn_settings 為「個人資料 / Profile」
+    // 【關鍵修復 2】：多語言字典全數更新
     const translations = {
       'zh-TW': {
         nav_about: '關於我', nav_portfolio: '作品集', nav_contact: '聯絡我',
@@ -735,6 +735,12 @@
           if (dict[key]) el.textContent = dict[key];
         }
       });
+
+      // 強制寫入按鈕文字，避免任何覆蓋問題
+      const settingsBtnText = document.getElementById('settings-btn-text');
+      if (settingsBtnText && dict.btn_settings) {
+        settingsBtnText.textContent = dict.btn_settings;
+      }
 
       document.querySelectorAll('[data-i18n-ph]').forEach(el => {
         const key = el.getAttribute('data-i18n-ph');
