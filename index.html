@@ -22,7 +22,7 @@
       --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
       --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.1);
       --danger-color: #ff4d4f;
-      --avatar-empty-bg: #e9ecef; /* 未上傳大頭貼時的底色 */
+      --avatar-empty-bg: #e9ecef;
     }
 
     [data-theme="dark"] {
@@ -190,7 +190,6 @@
       transition: border-color 0.3s ease, background-color 0.3s ease;
     }
 
-    /* 當未上傳圖片時顯示的加號 (+號) */
     .avatar-plus-icon {
       font-size: 3.5rem;
       color: var(--text-muted);
@@ -209,28 +208,26 @@
       border-color: var(--primary-color);
     }
 
-    /* 已上傳圖片時的樣式 */
     .avatar-container.has-image {
       border-style: solid;
       border-color: var(--card-bg);
     }
 
     .avatar-container.has-image .avatar-plus-icon {
-      display: none; /* 有圖片時隱藏加號 */
+      display: none;
     }
 
     .avatar-preview {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: none; /* 預設隱藏，上傳後顯示 */
+      display: none;
     }
 
     .avatar-container.has-image .avatar-preview {
       display: block;
     }
 
-    /* 懸停時遮罩 */
     .avatar-upload-overlay {
       position: absolute;
       top: 0;
@@ -523,8 +520,10 @@
         <button type="button" class="icon-btn" id="theme-toggle" title="切換深淺色模式">
           <span id="theme-icon">🌙</span> <span id="theme-text" data-i18n="theme_dark">深色</span>
         </button>
+        
+        <!-- 按鈕文字已修改為「個人資料」 -->
         <button type="button" class="icon-btn" id="open-settings">
-          ⚙️ <span data-i18n="btn_settings">設定</span>
+          👤 <span data-i18n="btn_settings">個人資料</span>
         </button>
       </div>
     </nav>
@@ -532,7 +531,6 @@
 
   <!-- 首頁 / 個人簡介 -->
   <section id="hero">
-    <!-- 大頭貼區域（帶加號預設狀態） -->
     <div class="avatar-container" id="avatar-container" title="點擊上傳頭像">
       <span class="avatar-plus-icon">+</span>
       <img src="" alt="大頭貼" class="avatar-preview" id="avatar-preview">
@@ -606,7 +604,7 @@
     </form>
   </section>
 
-  <!-- 設定彈視窗 -->
+  <!-- 彈視窗 -->
   <dialog class="settings-modal" id="settings-modal">
     <div class="modal-header" data-i18n="modal_title">編輯個人資料</div>
     <form id="settings-form" method="dialog">
@@ -630,10 +628,11 @@
   </footer>
 
   <script>
+    // 多語言字典中已更新 btn_settings 文字
     const translations = {
       'zh-TW': {
         nav_about: '關於我', nav_portfolio: '作品集', nav_contact: '聯絡我',
-        theme_dark: '深色', theme_light: '淺色', btn_settings: '設定',
+        theme_dark: '深色', theme_light: '淺色', btn_settings: '個人資料',
         avatar_overlay: '更換頭像', default_name: '你的名字',
         default_bio: '這裡寫上一句簡短又有力量的自我介紹，展示你的專業或個人風格。',
         title_portfolio: '作品區', tags_hint: '🏷️ 標籤 (標籤之間請用空白鍵隔開)：',
@@ -647,7 +646,7 @@
       },
       'zh-CN': {
         nav_about: '关于我', nav_portfolio: '作品集', nav_contact: '联系我',
-        theme_dark: '深色', theme_light: '浅色', btn_settings: '设置',
+        theme_dark: '深色', theme_light: '浅色', btn_settings: '个人资料',
         avatar_overlay: '更换头像', default_name: '你的名字',
         default_bio: '这里写上一句简短又有力量的自我介绍，展示你的专业或个人风格。',
         title_portfolio: '作品区', tags_hint: '🏷️ 标签 (标签之间请用空格隔开)：',
@@ -661,7 +660,7 @@
       },
       'en': {
         nav_about: 'About Me', nav_portfolio: 'Portfolio', nav_contact: 'Contact',
-        theme_dark: 'Dark', theme_light: 'Light', btn_settings: 'Settings',
+        theme_dark: 'Dark', theme_light: 'Light', btn_settings: 'Profile',
         avatar_overlay: 'Change Avatar', default_name: 'Your Name',
         default_bio: 'Write a short and powerful bio here to show your expertise and style.',
         title_portfolio: 'Portfolio', tags_hint: '🏷️ Tags (Separate tags with spaces):',
@@ -675,7 +674,7 @@
       },
       'ja': {
         nav_about: '私について', nav_portfolio: '作品集', nav_contact: 'お問い合わせ',
-        theme_dark: 'ダーク', theme_light: 'ライト', btn_settings: '設定',
+        theme_dark: 'ダーク', theme_light: 'ライト', btn_settings: 'プロフィール',
         avatar_overlay: '画像を変更', default_name: 'あなたの名前',
         default_bio: 'ここにあなたの専門性やスタイルを示す短い自己紹介を入力してください。',
         title_portfolio: 'ポートフォリオ', tags_hint: '🏷️ タグ (スペース区切り):',
@@ -689,7 +688,7 @@
       },
       'ko': {
         nav_about: '소개', nav_portfolio: '포트폴리오', nav_contact: '문의하기',
-        theme_dark: '다크', theme_light: '라이트', btn_settings: '설정',
+        theme_dark: '다크', theme_light: '라이트', btn_settings: '프로필',
         avatar_overlay: '프로필 변경', default_name: '이름',
         default_bio: '자신의 전문성과 스타일을 보여줄 수 있는 짧은 자기소개를 작성하세요.',
         title_portfolio: '포트폴리오', tags_hint: '🏷️ 태그 (공백으로 구분):',
@@ -815,7 +814,6 @@
       }
     }
 
-    // 初始化頁面
     window.addEventListener('DOMContentLoaded', () => {
       setLanguage(localStorage.getItem('userLang') || 'zh-TW');
       setTheme(localStorage.getItem('userTheme') || 'light');
@@ -827,7 +825,6 @@
       if (savedName) displayName.textContent = savedName;
       if (savedBio) displayBio.textContent = savedBio;
       
-      // 設定大頭貼圖片狀態
       if (savedAvatar) {
         avatarPreview.src = savedAvatar;
         avatarContainer.classList.add('has-image');
@@ -855,7 +852,6 @@
       });
     });
 
-    // 大頭貼上傳與切換顯示
     avatarContainer.addEventListener('click', () => avatarInput.click());
 
     avatarInput.addEventListener('change', function() {
@@ -870,7 +866,7 @@
         reader.addEventListener('load', function() {
           const base64Image = this.result;
           avatarPreview.src = base64Image;
-          avatarContainer.classList.add('has-image'); // 切換成有圖片的模式
+          avatarContainer.classList.add('has-image');
           localStorage.setItem('userAvatar', base64Image);
         });
         reader.readAsDataURL(file);
