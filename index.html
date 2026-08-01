@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>個人作品集網站 - 深淺色模式版</title>
+  <title>個人作品集網站</title>
   <style>
     /* === 1. 主題顏色變數 (CSS Variables) === */
     :root {
@@ -21,6 +21,7 @@
       --tag-bg: #eef5ff;
       --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
       --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.1);
+      --danger-color: #ff4d4f; /* 警告紅字顏色 */
     }
 
     /* 深色模式變數重寫 */
@@ -39,6 +40,7 @@
       --tag-bg: #1e293b;
       --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
       --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.5);
+      --danger-color: #ff6b6b;
     }
 
     /* 基礎樣式重置 */
@@ -356,6 +358,20 @@
       border-color: var(--primary-color);
     }
 
+    /* === 修正重點 1: 強化紅字警告顯示樣式 === */
+    .error-msg {
+      color: var(--danger-color) !important;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 0.4rem;
+      display: none; /* 預設隱藏 */
+    }
+
+    /* 當輸入框有錯誤時，邊框變紅 */
+    input.invalid-input {
+      border-color: var(--danger-color) !important;
+    }
+
     .submit-btn {
       width: 100%;
       background-color: var(--primary-color);
@@ -525,17 +541,26 @@
     </div>
   </section>
 
-  <!-- 聯絡表單 -->
+  <!-- 聯絡表單區 -->
   <section id="contact">
     <h2 class="section-title">聯絡我</h2>
-    <form class="contact-form" action="#" method="POST">
+    <!-- 加入 novalidate 關閉瀏覽器預設跳出的英文字泡泡，改用我們的自訂紅字 -->
+    <form class="contact-form" action="#" method="POST" novalidate>
       <div class="form-group">
         <label for="name">姓名</label>
         <input type="text" id="name" name="name" placeholder="請輸入你的姓名" required>
       </div>
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="example@email.com" required>
+        <input 
+          type="text" 
+          id="email" 
+          name="email" 
+          placeholder="example@gmail.com" 
+          required
+        >
+        <!-- 紅字警告提示區域 -->
+        <small class="error-msg" id="email-error">⚠️ 請輸入正確的 Gmail 地址（例如：example@gmail.com）</small>
       </div>
       <div class="form-group">
         <label for="message">留言內容</label>
@@ -589,7 +614,11 @@
     const themeIcon = document.getElementById('theme-icon');
     const themeText = document.getElementById('theme-text');
 
-    // === 深淺色模式邏輯 ===
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    const contactForm = document.querySelector('.contact-form');
+
+    // === 1. 深淺色模式邏輯 ===
     function setTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('userTheme', theme);
@@ -609,7 +638,7 @@
       setTheme(newTheme);
     });
 
-    // === 渲染膠囊標籤函式 ===
+    // === 2. 渲染膠囊標籤函式 ===
     function renderTagPills(editableElement) {
       const wrapperId = editableElement.getAttribute('data-wrapper');
       const wrapper = document.getElementById(wrapperId);
@@ -620,7 +649,46 @@
       wrapper.innerHTML = tags.map(tag => `<span class="tag-pill">#${tag}</span>`).join('');
     }
 
-    // === 1. 頁面載入時：還原主題偏好與 LocalStorage ===
+    // === 修正重點 2: 精準且即時的 Email 格式驗證邏輯 ===
+    if (emailInput && emailError) {
+      // 嚴格驗證必須是 xxxx@gmail.com 格式
+      const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
+
+      function checkEmailFormat() {
+        const value = emailInput.value.trim();
+
+        // 如果輸入的內容不是以 @gmail.com 結尾 (無論有打字還是輸入錯誤)
+        if (value !== '' && !gmailRegex.test(value)) {
+          emailError.style.display = 'block'; // 強制顯示紅字警告
+          emailInput.classList.add('invalid-input'); // 輸入框加紅框
+          return false;
+        } else {
+          emailError.style.display = 'none'; // 隱藏警告
+          emailInput.classList.remove('invalid-input');
+          return true;
+        }
+      }
+
+      // 即時監聽輸入、貼上、滑鼠離開事件
+      emailInput.addEventListener('input', checkEmailFormat);
+      emailInput.addEventListener('keyup', checkEmailFormat);
+      emailInput.addEventListener('blur', checkEmailFormat);
+
+      // 表單提交時的防護機制
+      if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+          const isValid = checkEmailFormat();
+          if (!isValid || !emailInput.value.trim()) {
+            e.preventDefault(); // 阻止表單送出
+            emailError.style.display = 'block';
+            emailInput.classList.add('invalid-input');
+            emailInput.focus();
+          }
+        });
+      }
+    }
+
+    // === 4. 頁面載入時：還原主題與 LocalStorage ===
     window.addEventListener('DOMContentLoaded', () => {
       // 載入主題
       const savedTheme = localStorage.getItem('userTheme') || 'light';
@@ -649,7 +717,7 @@
       });
     });
 
-    // === 2. 編輯與儲存邏輯 ===
+    // === 5. 作品集編輯與儲存邏輯 ===
     document.querySelectorAll('.editable').forEach(element => {
       element.addEventListener('input', function() {
         if (this.classList.contains('tags-editable')) {
@@ -668,7 +736,7 @@
       });
     });
 
-    // === 3. 頭像上傳邏輯 ===
+    // === 6. 頭像上傳邏輯 ===
     avatarContainer.addEventListener('click', () => avatarInput.click());
 
     avatarInput.addEventListener('change', function() {
@@ -689,7 +757,7 @@
       }
     });
 
-    // === 4. 設定視窗邏輯 ===
+    // === 7. 設定彈窗邏輯 ===
     openSettingsBtn.addEventListener('click', () => {
       inputName.value = displayName.textContent.trim();
       inputBio.value = displayBio.textContent.trim();
