@@ -1,10 +1,46 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>個人作品集網站 - 標籤功能版</title>
+  <title>個人作品集網站 - 深淺色模式版</title>
   <style>
+    /* === 1. 主題顏色變數 (CSS Variables) === */
+    :root {
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --text-muted: #666666;
+      --title-color: #111111;
+      --nav-bg: rgba(255, 255, 255, 0.95);
+      --primary-color: #0066cc;
+      --primary-hover: #0052a3;
+      --border-color: #eeeeee;
+      --input-border: #dddddd;
+      --editable-hover: #f0f7ff;
+      --tag-bg: #eef5ff;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 深色模式變數重寫 */
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #e0e0e0;
+      --text-muted: #aaaaaa;
+      --title-color: #ffffff;
+      --nav-bg: rgba(18, 18, 18, 0.95);
+      --primary-color: #4d9fff;
+      --primary-hover: #1a82ff;
+      --border-color: #2c2c2c;
+      --input-border: #444444;
+      --editable-hover: #1e293b;
+      --tag-bg: #1e293b;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+
     /* 基礎樣式重置 */
     * {
       box-sizing: border-box;
@@ -15,8 +51,9 @@
     html {
       scroll-behavior: smooth;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      color: #333;
-      background-color: #f8f9fa;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     body {
@@ -29,10 +66,11 @@
       top: 0;
       left: 0;
       width: 100%;
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--nav-bg);
       backdrop-filter: blur(5px);
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       z-index: 1000;
+      transition: background 0.3s ease;
     }
 
     nav {
@@ -47,14 +85,14 @@
     .logo {
       font-weight: bold;
       font-size: 1.2rem;
-      color: #111;
+      color: var(--title-color);
       text-decoration: none;
     }
 
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
+      gap: 1.2rem;
     }
 
     .nav-links {
@@ -65,33 +103,34 @@
 
     .nav-links a {
       text-decoration: none;
-      color: #555;
+      color: var(--text-muted);
       font-weight: 500;
       transition: color 0.2s ease;
     }
 
     .nav-links a:hover {
-      color: #0066cc;
+      color: var(--primary-color);
     }
 
-    .settings-btn {
+    /* 工具按鈕（設定 & 主題切換） */
+    .icon-btn {
       background: none;
-      border: 1px solid #ddd;
+      border: 1px solid var(--input-border);
       padding: 0.4rem 0.8rem;
       border-radius: 6px;
       cursor: pointer;
       font-size: 0.9rem;
-      color: #555;
+      color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: 0.3rem;
       transition: all 0.2s ease;
     }
 
-    .settings-btn:hover {
-      background-color: #f0f0f0;
-      border-color: #ccc;
-      color: #111;
+    .icon-btn:hover {
+      background-color: var(--editable-hover);
+      border-color: var(--primary-color);
+      color: var(--title-color);
     }
 
     /* 頁面通用區塊 */
@@ -110,6 +149,7 @@
       margin-bottom: 2rem;
       text-align: center;
       position: relative;
+      color: var(--title-color);
     }
 
     .section-title::after {
@@ -117,7 +157,7 @@
       display: block;
       width: 50px;
       height: 3px;
-      background-color: #0066cc;
+      background-color: var(--primary-color);
       margin: 0.5rem auto 0;
       border-radius: 2px;
     }
@@ -136,8 +176,8 @@
       cursor: pointer;
       overflow: hidden;
       border-radius: 50%;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      border: 3px solid #fff;
+      box-shadow: var(--shadow-sm);
+      border: 3px solid var(--card-bg);
     }
 
     .avatar-preview {
@@ -174,12 +214,12 @@
     .hero-name {
       font-size: 2.5rem;
       margin-bottom: 0.5rem;
-      color: #111;
+      color: var(--title-color);
     }
 
     .hero-bio {
       font-size: 1.2rem;
-      color: #666;
+      color: var(--text-muted);
       max-width: 600px;
     }
 
@@ -192,18 +232,19 @@
     }
 
     .portfolio-card {
-      background: #fff;
+      background: var(--card-bg);
       border-radius: 12px;
       padding: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
       display: flex;
       flex-direction: column;
+      border: 1px solid var(--border-color);
     }
 
     .portfolio-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow-lg);
     }
 
     .editable {
@@ -215,43 +256,42 @@
     }
 
     .editable:hover {
-      background-color: #f0f7ff;
+      background-color: var(--editable-hover);
     }
 
     .editable:focus {
-      background-color: #fff;
-      box-shadow: 0 0 0 2px #0066cc;
+      background-color: var(--card-bg);
+      box-shadow: 0 0 0 2px var(--primary-color);
       cursor: text;
     }
 
     .portfolio-card h3 {
       font-size: 1.3rem;
       margin-bottom: 0.8rem;
-      color: #111;
+      color: var(--title-color);
     }
 
     .portfolio-card p {
-      color: #666;
+      color: var(--text-muted);
       font-size: 0.95rem;
       line-height: 1.5;
       margin-bottom: 1rem;
     }
 
-    /* === 標籤區塊樣式 (新增重點) === */
+    /* 標籤區塊樣式 */
     .tags-container {
-      margin-top: auto; /* 將標籤推至卡片底部 */
+      margin-top: auto;
       padding-top: 1rem;
-      border-top: 1px dashed #eee;
+      border-top: 1px dashed var(--border-color);
     }
 
     .tags-hint {
       font-size: 0.75rem;
-      color: #999;
+      color: var(--text-muted);
       margin-bottom: 0.5rem;
       display: block;
     }
 
-    /* 展示用膠囊標籤 */
     .tags-wrapper {
       display: flex;
       flex-wrap: wrap;
@@ -260,30 +300,30 @@
     }
 
     .tag-pill {
-      background-color: #eef5ff;
-      color: #0066cc;
+      background-color: var(--tag-bg);
+      color: var(--primary-color);
       font-size: 0.8rem;
       padding: 0.2rem 0.6rem;
       border-radius: 20px;
       font-weight: 500;
     }
 
-    /* 可編輯的標籤文字區 */
     .tags-editable {
       font-size: 0.85rem;
-      color: #555;
+      color: var(--text-muted);
       min-height: 1.5em;
     }
 
     /* 聯絡表單區樣式 */
     .contact-form {
-      background: #fff;
+      background: var(--card-bg);
       padding: 2.5rem;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow-sm);
       max-width: 600px;
       width: 100%;
       margin: 0 auto;
+      border: 1px solid var(--border-color);
     }
 
     .form-group {
@@ -294,29 +334,31 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
-      color: #444;
+      color: var(--text-color);
     }
 
     .form-group input,
     .form-group textarea {
       width: 100%;
       padding: 0.8rem 1rem;
-      border: 1px solid #ddd;
+      border: 1px solid var(--input-border);
       border-radius: 6px;
       font-size: 1rem;
       font-family: inherit;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       transition: border-color 0.2s ease;
     }
 
     .form-group input:focus,
     .form-group textarea:focus {
       outline: none;
-      border-color: #0066cc;
+      border-color: var(--primary-color);
     }
 
     .submit-btn {
       width: 100%;
-      background-color: #0066cc;
+      background-color: var(--primary-color);
       color: white;
       padding: 0.9rem;
       border: none;
@@ -328,22 +370,24 @@
     }
 
     .submit-btn:hover {
-      background-color: #0052a3;
+      background-color: var(--primary-hover);
     }
 
     /* 設定彈出視窗 */
     dialog.settings-modal {
-      border: none;
+      border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 2rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      background: var(--card-bg);
+      color: var(--text-color);
+      box-shadow: var(--shadow-lg);
       max-width: 450px;
       width: 90%;
       margin: auto;
     }
 
     dialog::backdrop {
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(3px);
     }
 
@@ -351,7 +395,7 @@
       font-size: 1.4rem;
       font-weight: bold;
       margin-bottom: 1.5rem;
-      color: #111;
+      color: var(--title-color);
     }
 
     .modal-actions {
@@ -362,9 +406,9 @@
     }
 
     .btn-cancel {
-      background: #eee;
-      color: #333;
-      border: none;
+      background: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid var(--input-border);
       padding: 0.6rem 1.2rem;
       border-radius: 6px;
       cursor: pointer;
@@ -372,7 +416,7 @@
     }
 
     .btn-save {
-      background: #0066cc;
+      background: var(--primary-color);
       color: white;
       border: none;
       padding: 0.6rem 1.2rem;
@@ -381,16 +425,16 @@
       font-weight: 500;
     }
 
-    .btn-cancel:hover { background: #e0e0e0; }
-    .btn-save:hover { background: #0052a3; }
+    .btn-cancel:hover { background: var(--editable-hover); }
+    .btn-save:hover { background: var(--primary-hover); }
 
     /* 頁尾 */
     footer {
       text-align: center;
       padding: 2rem;
-      color: #888;
+      color: var(--text-muted);
       font-size: 0.9rem;
-      border-top: 1px solid #eee;
+      border-top: 1px solid var(--border-color);
     }
 
     @media (max-width: 600px) {
@@ -413,7 +457,12 @@
           <li><a href="#portfolio">作品集</a></li>
           <li><a href="#contact">聯絡我</a></li>
         </ul>
-        <button type="button" class="settings-btn" id="open-settings">
+        
+        <!-- 右上角功能按鈕：深淺色模式 + 設定 -->
+        <button type="button" class="icon-btn" id="theme-toggle" title="切換深淺色模式">
+          <span id="theme-icon">🌙</span> <span id="theme-text">深色</span>
+        </button>
+        <button type="button" class="icon-btn" id="open-settings">
           ⚙️ 設定
         </button>
       </div>
@@ -432,7 +481,7 @@
     <p class="hero-bio" id="display-bio">這裡寫上一句簡短又有力量的自我介紹，展示你的專業或個人風格。</p>
   </section>
 
-  <!-- 第二頁：作品區 (加入標籤功能) -->
+  <!-- 作品區 -->
   <section id="portfolio">
     <h2 class="section-title">作品區</h2>
     <div class="portfolio-grid">
@@ -442,7 +491,6 @@
         <h3 class="editable" contenteditable="true" data-key="project_title_1" title="點擊即可修改標題">作品名稱 A</h3>
         <p class="editable" contenteditable="true" data-key="project_desc_1" title="點擊即可修改說明">作品簡述與使用的技術。點擊此處可自由打字編輯。</p>
         
-        <!-- 標籤區塊 1 -->
         <div class="tags-container">
           <span class="tags-hint">🏷️ 標籤 (標籤之間請用空白鍵隔開)：</span>
           <div class="tags-wrapper" id="tags-wrapper-1"></div>
@@ -455,7 +503,6 @@
         <h3 class="editable" contenteditable="true" data-key="project_title_2" title="點擊即可修改標題">作品名稱 B</h3>
         <p class="editable" contenteditable="true" data-key="project_desc_2" title="點擊即可修改說明">專案背景與獲得的成果。點擊此處可自由打字編輯。</p>
         
-        <!-- 標籤區塊 2 -->
         <div class="tags-container">
           <span class="tags-hint">🏷️ 標籤 (標籤之間請用空白鍵隔開)：</span>
           <div class="tags-wrapper" id="tags-wrapper-2"></div>
@@ -468,7 +515,6 @@
         <h3 class="editable" contenteditable="true" data-key="project_title_3" title="點擊即可修改標題">作品名稱 C</h3>
         <p class="editable" contenteditable="true" data-key="project_desc_3" title="點擊即可修改說明">其他相關專案說明。點擊此處可自由打字編輯。</p>
         
-        <!-- 標籤區塊 3 -->
         <div class="tags-container">
           <span class="tags-hint">🏷️ 標籤 (標籤之間請用空白鍵隔開)：</span>
           <div class="tags-wrapper" id="tags-wrapper-3"></div>
@@ -479,7 +525,7 @@
     </div>
   </section>
 
-  <!-- 第三頁：聯絡表單 -->
+  <!-- 聯絡表單 -->
   <section id="contact">
     <h2 class="section-title">聯絡我</h2>
     <form class="contact-form" action="#" method="POST">
@@ -499,7 +545,7 @@
     </form>
   </section>
 
-  <!-- 彈出式設定視窗 -->
+  <!-- 設定彈視窗 -->
   <dialog class="settings-modal" id="settings-modal">
     <div class="modal-header">編輯個人資料</div>
     <form id="settings-form" method="dialog">
@@ -539,6 +585,30 @@
     const inputName = document.getElementById('input-name');
     const inputBio = document.getElementById('input-bio');
 
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+
+    // === 深淺色模式邏輯 ===
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('userTheme', theme);
+
+      if (theme === 'dark') {
+        themeIcon.textContent = '☀️';
+        themeText.textContent = '淺色';
+      } else {
+        themeIcon.textContent = '🌙';
+        themeText.textContent = '深色';
+      }
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      setTheme(newTheme);
+    });
+
     // === 渲染膠囊標籤函式 ===
     function renderTagPills(editableElement) {
       const wrapperId = editableElement.getAttribute('data-wrapper');
@@ -546,15 +616,17 @@
       if (!wrapper) return;
 
       const text = editableElement.textContent.trim();
-      // 使用半形/全形空白切割字串，並濾除空白項目
       const tags = text.split(/[\s\u3000]+/).filter(tag => tag.length > 0);
-
-      // 重新生成膠囊 HTML
       wrapper.innerHTML = tags.map(tag => `<span class="tag-pill">#${tag}</span>`).join('');
     }
 
-    // === 1. 頁面載入時：還原 LocalStorage 並渲染標籤 ===
+    // === 1. 頁面載入時：還原主題偏好與 LocalStorage ===
     window.addEventListener('DOMContentLoaded', () => {
+      // 載入主題
+      const savedTheme = localStorage.getItem('userTheme') || 'light';
+      setTheme(savedTheme);
+
+      // 載入個人資料
       const savedName = localStorage.getItem('userName');
       const savedBio = localStorage.getItem('userBio');
       const savedAvatar = localStorage.getItem('userAvatar');
@@ -563,7 +635,7 @@
       if (savedBio) displayBio.textContent = savedBio;
       if (savedAvatar) avatarPreview.src = savedAvatar;
 
-      // 還原作品標題、內容與標籤
+      // 還原作品集文字與標籤
       document.querySelectorAll('.editable').forEach(element => {
         const key = element.getAttribute('data-key');
         const savedText = localStorage.getItem(key);
@@ -571,27 +643,23 @@
           element.textContent = savedText;
         }
 
-        // 如果是標籤元件，初始化渲染膠囊樣式
         if (element.classList.contains('tags-editable')) {
           renderTagPills(element);
         }
       });
     });
 
-    // === 2. 標籤與文字即時編輯與更新邏輯 ===
+    // === 2. 編輯與儲存邏輯 ===
     document.querySelectorAll('.editable').forEach(element => {
-      // 打字或貼上時（包含按空白鍵），即時更新膠囊標籤
       element.addEventListener('input', function() {
         if (this.classList.contains('tags-editable')) {
           renderTagPills(this);
         }
       });
 
-      // 離開編輯區域時儲存到 LocalStorage
       element.addEventListener('blur', function() {
         const key = this.getAttribute('data-key');
         const content = this.textContent.trim();
-        
         localStorage.setItem(key, content);
         
         if (this.classList.contains('tags-editable')) {
