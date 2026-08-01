@@ -1,19 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
-</html><!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>個人作品集網站</title>
+  <title>個人作品集網站 - LocalStorage 本地儲存版</title>
   <style>
     /* 基礎樣式重置 */
     * {
@@ -23,7 +13,7 @@
     }
     
     html {
-      scroll-behavior: smooth; /* 平滑捲動 */
+      scroll-behavior: smooth;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       color: #333;
       background-color: #f8f9fa;
@@ -61,6 +51,12 @@
       text-decoration: none;
     }
 
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
     .nav-links {
       display: flex;
       list-style: none;
@@ -76,6 +72,26 @@
 
     .nav-links a:hover {
       color: #0066cc;
+    }
+
+    .settings-btn {
+      background: none;
+      border: 1px solid #ddd;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.2s ease;
+    }
+
+    .settings-btn:hover {
+      background-color: #f0f0f0;
+      border-color: #ccc;
+      color: #111;
     }
 
     /* 頁面通用區塊 */
@@ -112,14 +128,47 @@
       align-items: center;
     }
 
-    .avatar {
+    .avatar-container {
+      position: relative;
       width: 160px;
       height: 160px;
-      border-radius: 50%;
-      object-fit: cover;
       margin-bottom: 1.5rem;
+      cursor: pointer;
+      overflow: hidden;
+      border-radius: 50%;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       border: 3px solid #fff;
+    }
+
+    .avatar-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-upload-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-weight: 500;
+    }
+
+    .avatar-container:hover .avatar-upload-overlay {
+      opacity: 1;
+    }
+
+    #avatar-input {
+      display: none;
     }
 
     .hero-name {
@@ -134,7 +183,7 @@
       max-width: 600px;
     }
 
-    /* 作品區 */
+    /* 作品區樣式 */
     .portfolio-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -167,7 +216,7 @@
       line-height: 1.5;
     }
 
-    /* 聯絡表單區 */
+    /* 聯絡表單區樣式 */
     .contact-form {
       background: #fff;
       padding: 2.5rem;
@@ -223,6 +272,59 @@
       background-color: #0052a3;
     }
 
+    /* 設定彈出視窗 (Dialog 樣式) */
+    dialog.settings-modal {
+      border: none;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      max-width: 450px;
+      width: 90%;
+      margin: auto;
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(3px);
+    }
+
+    .modal-header {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      color: #111;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn-cancel {
+      background: #eee;
+      color: #333;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-save {
+      background: #0066cc;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-cancel:hover { background: #e0e0e0; }
+    .btn-save:hover { background: #0052a3; }
+
     /* 頁尾 */
     footer {
       text-align: center;
@@ -232,11 +334,11 @@
       border-top: 1px solid #eee;
     }
 
-    /* 行動裝置適應 */
     @media (max-width: 600px) {
       .hero-name { font-size: 2rem; }
       .hero-bio { font-size: 1rem; }
       .contact-form { padding: 1.5rem; }
+      .nav-links { gap: 1rem; }
     }
   </style>
 </head>
@@ -246,76 +348,173 @@
   <header>
     <nav>
       <a href="#hero" class="logo">My Portfolio</a>
-      <ul class="nav-links">
-        <li><a href="#hero">關於我</a></li>
-        <li><a href="#portfolio">作品集</a></li>
-        <li><a href="#contact">聯絡我</a></li>
-      </ul>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="#hero">關於我</a></li>
+          <li><a href="#portfolio">作品集</a></li>
+          <li><a href="#contact">聯絡我</a></li>
+        </ul>
+        <button type="button" class="settings-btn" id="open-settings">
+          ⚙️ 設定
+        </button>
+      </div>
     </nav>
   </header>
 
-  <!-- 第一頁：首頁 / 個人簡介 -->
+  <!-- 首頁 / 個人簡介 -->
   <section id="hero">
-    <!-- 請將 src 替換成你的圖片連結或本地檔案路徑 -->
-    <img src="https://via.placeholder.com/160" alt="大頭貼" class="avatar">
-    <h1 class="hero-name">你的名字</h1>
-    <p class="hero-bio">這裡寫上一句簡短又有力量的自我介紹，展示你的專業或個人風格。</p>
+    <div class="avatar-container" id="avatar-container" title="點擊更換頭像">
+      <img src="https://via.placeholder.com/160?text=Click+to+Upload" alt="大頭貼" class="avatar-preview" id="avatar-preview">
+      <div class="avatar-upload-overlay">更換頭像</div>
+    </div>
+    <input type="file" id="avatar-input" accept="image/*">
+
+    <h1 class="hero-name" id="display-name">你的名字</h1>
+    <p class="hero-bio" id="display-bio">這裡寫上一句簡短又有力量的自我介紹，展示你的專業或個人風格。</p>
   </section>
 
-  <!-- 第二頁：作品區 -->
+  <!-- 作品區 -->
   <section id="portfolio">
     <h2 class="section-title">作品區</h2>
     <div class="portfolio-grid">
-      
-      <!-- 作品項目 1 -->
       <article class="portfolio-card">
         <h3>作品名稱 A</h3>
-        <p>這是一個關於這個作品的詳細說明。你可以簡述專案背景、使用的技術、或是你所解決的問題與獲得的成果。</p>
+        <p>作品簡述與使用的技術。</p>
       </article>
-
-      <!-- 作品項目 2 -->
       <article class="portfolio-card">
         <h3>作品名稱 B</h3>
-        <p>這裡填寫第二個作品的簡介與特色。適當控制文字長度，讓整體版面保持整齊與視覺平衡。</p>
+        <p>專案背景與獲得的成果。</p>
       </article>
-
-      <!-- 作品項目 3 -->
       <article class="portfolio-card">
         <h3>作品名稱 C</h3>
-        <p>這裡填寫第三個作品的簡介。如果未來需要增加更多作品，直接複製整個卡片區塊即可。</p>
+        <p>其他相關專案說明。</p>
       </article>
-
     </div>
   </section>
 
-  <!-- 第三頁：聯絡表單 -->
+  <!-- 聯絡表單 -->
   <section id="contact">
     <h2 class="section-title">聯絡我</h2>
     <form class="contact-form" action="#" method="POST">
-      
       <div class="form-group">
         <label for="name">姓名</label>
         <input type="text" id="name" name="name" placeholder="請輸入你的姓名" required>
       </div>
-
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" name="email" placeholder="example@email.com" required>
       </div>
-
       <div class="form-group">
         <label for="message">留言內容</label>
         <textarea id="message" name="message" rows="5" placeholder="請寫下你想跟我說的話..." required></textarea>
       </div>
-
       <button type="submit" class="submit-btn">傳送訊息</button>
     </form>
   </section>
+
+  <!-- 彈出式設定視窗 (Modal) -->
+  <dialog class="settings-modal" id="settings-modal">
+    <div class="modal-header">編輯個人資料</div>
+    <form id="settings-form" method="dialog">
+      <div class="form-group">
+        <label for="input-name">姓名</label>
+        <input type="text" id="input-name" placeholder="請輸入姓名" required>
+      </div>
+      <div class="form-group">
+        <label for="input-bio">自我介紹</label>
+        <textarea id="input-bio" rows="4" placeholder="請輸入一句自我介紹" required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" id="close-settings">取消</button>
+        <button type="submit" class="btn-save" id="save-settings">儲存變更</button>
+      </div>
+    </form>
+  </dialog>
 
   <!-- 頁尾 -->
   <footer>
     <p>&copy; 2026 Your Name. All rights reserved.</p>
   </footer>
+
+  <!-- JavaScript 邏輯 (整合 LocalStorage) -->
+  <script>
+    // 取得 DOM 元素
+    const avatarContainer = document.getElementById('avatar-container');
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarPreview = document.getElementById('avatar-preview');
+
+    const settingsModal = document.getElementById('settings-modal');
+    const openSettingsBtn = document.getElementById('open-settings');
+    const closeSettingsBtn = document.getElementById('close-settings');
+    const settingsForm = document.getElementById('settings-form');
+
+    const displayName = document.getElementById('display-name');
+    const displayBio = document.getElementById('display-bio');
+    const inputName = document.getElementById('input-name');
+    const inputBio = document.getElementById('input-bio');
+
+    // === 1. 頁面載入時：檢查 LocalStorage 並還原資料 ===
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedName = localStorage.getItem('userName');
+      const savedBio = localStorage.getItem('userBio');
+      const savedAvatar = localStorage.getItem('userAvatar');
+
+      if (savedName) displayName.textContent = savedName;
+      if (savedBio) displayBio.textContent = savedBio;
+      if (savedAvatar) avatarPreview.src = savedAvatar;
+    });
+
+    // === 2. 頭像上傳邏輯 ===
+    avatarContainer.addEventListener('click', () => avatarInput.click());
+
+    avatarInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        // 限制圖片大小 (建議 2MB 以內，避免超過 LocalStorage 的上限 ~5MB)
+        if (file.size > 2 * 1024 * 1024) {
+          alert('圖片檔案過大，請選擇 2MB 以下的圖片！');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.addEventListener('load', function() {
+          const base64Image = this.result;
+          avatarPreview.src = base64Image;
+          // 將頭像以 Base64 字串存入 LocalStorage
+          localStorage.setItem('userAvatar', base64Image);
+        });
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // === 3. 設定視窗與個人資料儲存邏輯 ===
+    openSettingsBtn.addEventListener('click', () => {
+      inputName.value = displayName.textContent.trim();
+      inputBio.value = displayBio.textContent.trim();
+      settingsModal.showModal();
+    });
+
+    closeSettingsBtn.addEventListener('click', () => {
+      settingsModal.close();
+    });
+
+    settingsForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const newName = inputName.value.trim();
+      const newBio = inputBio.value.trim();
+
+      // 更新 DOM
+      displayName.textContent = newName;
+      displayBio.textContent = newBio;
+
+      // 寫入 LocalStorage
+      localStorage.setItem('userName', newName);
+      localStorage.setItem('userBio', newBio);
+
+      settingsModal.close();
+    });
+  </script>
 
 </body>
 </html>
