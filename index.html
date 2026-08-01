@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>個人作品集網站 - LocalStorage 本地儲存版</title>
+  <title>個人作品集網站 - 全介面可編輯版</title>
   <style>
     /* 基礎樣式重置 */
     * {
@@ -183,7 +183,7 @@
       max-width: 600px;
     }
 
-    /* 作品區樣式 */
+    /* === 作品區樣式（可編輯微調） === */
     .portfolio-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -202,6 +202,27 @@
     .portfolio-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 可編輯元素的微互動視覺效果 */
+    .editable {
+      outline: none;
+      border-radius: 4px;
+      padding: 2px 4px;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+
+    /* 滑鼠懸停時給予輕微背景提示可點擊 */
+    .editable:hover {
+      background-color: #f0f7ff;
+    }
+
+    /* 點擊獲取焦點進行編輯時的框線效果 */
+    .editable:focus {
+      background-color: #fff;
+      box-shadow: 0 0 0 2px #0066cc;
+      cursor: text;
     }
 
     .portfolio-card h3 {
@@ -272,7 +293,7 @@
       background-color: #0052a3;
     }
 
-    /* 設定彈出視窗 (Dialog 樣式) */
+    /* 設定彈出視窗 */
     dialog.settings-modal {
       border: none;
       border-radius: 12px;
@@ -373,26 +394,33 @@
     <p class="hero-bio" id="display-bio">這裡寫上一句簡短又有力量的自我介紹，展示你的專業或個人風格。</p>
   </section>
 
-  <!-- 作品區 -->
+  <!-- === 第二頁：作品區 (加入可直接點擊編輯功能) === -->
   <section id="portfolio">
     <h2 class="section-title">作品區</h2>
     <div class="portfolio-grid">
+      
+      <!-- 作品 1 -->
       <article class="portfolio-card">
-        <h3>作品名稱 A</h3>
-        <p>作品簡述與使用的技術。</p>
+        <h3 class="editable" contenteditable="true" data-key="project_title_1" title="點擊即可修改標題">作品名稱 A</h3>
+        <p class="editable" contenteditable="true" data-key="project_desc_1" title="點擊即可修改說明">作品簡述與使用的技術。點擊此處可自由打字編輯。</p>
       </article>
+
+      <!-- 作品 2 -->
       <article class="portfolio-card">
-        <h3>作品名稱 B</h3>
-        <p>專案背景與獲得的成果。</p>
+        <h3 class="editable" contenteditable="true" data-key="project_title_2" title="點擊即可修改標題">作品名稱 B</h3>
+        <p class="editable" contenteditable="true" data-key="project_desc_2" title="點擊即可修改說明">專案背景與獲得的成果。點擊此處可自由打字編輯。</p>
       </article>
+
+      <!-- 作品 3 -->
       <article class="portfolio-card">
-        <h3>作品名稱 C</h3>
-        <p>其他相關專案說明。</p>
+        <h3 class="editable" contenteditable="true" data-key="project_title_3" title="點擊即可修改標題">作品名稱 C</h3>
+        <p class="editable" contenteditable="true" data-key="project_desc_3" title="點擊即可修改說明">其他相關專案說明。點擊此處可自由打字編輯。</p>
       </article>
+
     </div>
   </section>
 
-  <!-- 聯絡表單 -->
+  <!-- 第三頁：聯絡表單 -->
   <section id="contact">
     <h2 class="section-title">聯絡我</h2>
     <form class="contact-form" action="#" method="POST">
@@ -412,7 +440,7 @@
     </form>
   </section>
 
-  <!-- 彈出式設定視窗 (Modal) -->
+  <!-- 彈出式設定視窗 -->
   <dialog class="settings-modal" id="settings-modal">
     <div class="modal-header">編輯個人資料</div>
     <form id="settings-form" method="dialog">
@@ -436,7 +464,7 @@
     <p>&copy; 2026 Your Name. All rights reserved.</p>
   </footer>
 
-  <!-- JavaScript 邏輯 (整合 LocalStorage) -->
+  <!-- JavaScript 邏輯 -->
   <script>
     // 取得 DOM 元素
     const avatarContainer = document.getElementById('avatar-container');
@@ -453,8 +481,9 @@
     const inputName = document.getElementById('input-name');
     const inputBio = document.getElementById('input-bio');
 
-    // === 1. 頁面載入時：檢查 LocalStorage 並還原資料 ===
+    // === 1. 頁面載入時：從 LocalStorage 還原所有個人與作品集資料 ===
     window.addEventListener('DOMContentLoaded', () => {
+      // 載入個人頭像與基本資料
       const savedName = localStorage.getItem('userName');
       const savedBio = localStorage.getItem('userBio');
       const savedAvatar = localStorage.getItem('userAvatar');
@@ -462,15 +491,35 @@
       if (savedName) displayName.textContent = savedName;
       if (savedBio) displayBio.textContent = savedBio;
       if (savedAvatar) avatarPreview.src = savedAvatar;
+
+      // 載入所有可編輯作品的內容
+      document.querySelectorAll('.editable').forEach(element => {
+        const key = element.getAttribute('data-key');
+        const savedText = localStorage.getItem(key);
+        if (savedText) {
+          element.textContent = savedText;
+        }
+      });
     });
 
-    // === 2. 頭像上傳邏輯 ===
+    // === 2. 作品集直接編輯邏輯 (contenteditable + blur) ===
+    document.querySelectorAll('.editable').forEach(element => {
+      // 當滑鼠點擊旁邊、離開文字輸入區域時觸發 blur 事件
+      element.addEventListener('blur', function() {
+        const key = this.getAttribute('data-key');
+        const content = this.textContent.trim();
+        
+        // 立即存入 LocalStorage
+        localStorage.setItem(key, content);
+      });
+    });
+
+    // === 3. 頭像上傳邏輯 ===
     avatarContainer.addEventListener('click', () => avatarInput.click());
 
     avatarInput.addEventListener('change', function() {
       const file = this.files[0];
       if (file) {
-        // 限制圖片大小 (建議 2MB 以內，避免超過 LocalStorage 的上限 ~5MB)
         if (file.size > 2 * 1024 * 1024) {
           alert('圖片檔案過大，請選擇 2MB 以下的圖片！');
           return;
@@ -480,14 +529,13 @@
         reader.addEventListener('load', function() {
           const base64Image = this.result;
           avatarPreview.src = base64Image;
-          // 將頭像以 Base64 字串存入 LocalStorage
           localStorage.setItem('userAvatar', base64Image);
         });
         reader.readAsDataURL(file);
       }
     });
 
-    // === 3. 設定視窗與個人資料儲存邏輯 ===
+    // === 4. 設定視窗邏輯 ===
     openSettingsBtn.addEventListener('click', () => {
       inputName.value = displayName.textContent.trim();
       inputBio.value = displayBio.textContent.trim();
@@ -504,11 +552,9 @@
       const newName = inputName.value.trim();
       const newBio = inputBio.value.trim();
 
-      // 更新 DOM
       displayName.textContent = newName;
       displayBio.textContent = newBio;
 
-      // 寫入 LocalStorage
       localStorage.setItem('userName', newName);
       localStorage.setItem('userBio', newBio);
 
