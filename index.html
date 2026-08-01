@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html><!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>個人作品集網站</title>
+  <style>
+    /* 基礎樣式重置 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html {
+      scroll-behavior: smooth; /* 平滑捲動 */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #333;
+      background-color: #f8f9fa;
+    }
+
+    body {
+      line-height: 1.6;
+    }
+
+    /* 導覽列 */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
+    }
+
+    nav {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #111;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #555;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #0066cc;
+    }
+
+    /* 頁面通用區塊 */
+    section {
+      padding: 6rem 2rem 4rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 3px;
+      background-color: #0066cc;
+      margin: 0.5rem auto 0;
+      border-radius: 2px;
+    }
+
+    /* 首頁 / 個人簡介區 */
+    #hero {
+      text-align: center;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border: 3px solid #fff;
+    }
+
+    .hero-name {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #111;
+    }
+
+    .hero-bio {
+      font-size: 1.2rem;
+      color: #666;
+      max-width: 600px;
+    }
+
+    /* 作品區 */
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .portfolio-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .portfolio-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .portfolio-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.8rem;
+      color: #111;
+    }
+
+    .portfolio-card p {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* 聯絡表單區 */
+    .contact-form {
+      background: #fff;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #444;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #0066cc;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background-color: #0066cc;
+      color: white;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: #0052a3;
+    }
+
+    /* 頁尾 */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #888;
+      font-size: 0.9rem;
+      border-top: 1px solid #eee;
+    }
+
+    /* 行動裝置適應 */
+    @media (max-width: 600px) {
+      .hero-name { font-size: 2rem; }
+      .hero-bio { font-size: 1rem; }
+      .contact-form { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 導覽列 -->
+  <header>
+    <nav>
+      <a href="#hero" class="logo">My Portfolio</a>
+      <ul class="nav-links">
+        <li><a href="#hero">關於我</a></li>
+        <li><a href="#portfolio">作品集</a></li>
+        <li><a href="#contact">聯絡我</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- 第一頁：首頁 / 個人簡介 -->
+  <section id="hero">
+    <!-- 請將 src 替換成你的圖片連結或本地檔案路徑 -->
+    <img src="https://via.placeholder.com/160" alt="大頭貼" class="avatar">
+    <h1 class="hero-name">你的名字</h1>
+    <p class="hero-bio">這裡寫上一句簡短又有力量的自我介紹，展示你的專業或個人風格。</p>
+  </section>
+
+  <!-- 第二頁：作品區 -->
+  <section id="portfolio">
+    <h2 class="section-title">作品區</h2>
+    <div class="portfolio-grid">
+      
+      <!-- 作品項目 1 -->
+      <article class="portfolio-card">
+        <h3>作品名稱 A</h3>
+        <p>這是一個關於這個作品的詳細說明。你可以簡述專案背景、使用的技術、或是你所解決的問題與獲得的成果。</p>
+      </article>
+
+      <!-- 作品項目 2 -->
+      <article class="portfolio-card">
+        <h3>作品名稱 B</h3>
+        <p>這裡填寫第二個作品的簡介與特色。適當控制文字長度，讓整體版面保持整齊與視覺平衡。</p>
+      </article>
+
+      <!-- 作品項目 3 -->
+      <article class="portfolio-card">
+        <h3>作品名稱 C</h3>
+        <p>這裡填寫第三個作品的簡介。如果未來需要增加更多作品，直接複製整個卡片區塊即可。</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- 第三頁：聯絡表單 -->
+  <section id="contact">
+    <h2 class="section-title">聯絡我</h2>
+    <form class="contact-form" action="#" method="POST">
+      
+      <div class="form-group">
+        <label for="name">姓名</label>
+        <input type="text" id="name" name="name" placeholder="請輸入你的姓名" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="example@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="message">留言內容</label>
+        <textarea id="message" name="message" rows="5" placeholder="請寫下你想跟我說的話..." required></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">傳送訊息</button>
+    </form>
+  </section>
+
+  <!-- 頁尾 -->
+  <footer>
+    <p>&copy; 2026 Your Name. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
