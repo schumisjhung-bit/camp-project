@@ -3,904 +3,902 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>個人作品集網站</title>
+  <title>Portfolio Studio</title>
   <style>
-    /* === 1. 主題顏色變數 (CSS Variables) === */
     :root {
-      --bg-color: #f8f9fa;
+      --bg-color: #f8fafc;
       --card-bg: #ffffff;
-      --text-color: #333333;
-      --text-muted: #666666;
-      --title-color: #111111;
-      --nav-bg: rgba(255, 255, 255, 0.95);
-      --primary-color: #0066cc;
-      --primary-hover: #0052a3;
-      --border-color: #eeeeee;
-      --input-border: #dddddd;
-      --editable-hover: #f0f7ff;
-      --tag-bg: #eef5ff;
-      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
-      --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.1);
-      --danger-color: #ff4d4f;
-      --avatar-empty-bg: #e9ecef;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --primary-color: #3b82f6;
+      --primary-hover: #2563eb;
+      --success-color: #10b981;
+      --success-hover: #059669;
+      --danger-color: #ef4444;
+      --danger-hover: #dc2626;
+      --input-bg: #f8fafc;
+      --input-border: #cbd5e1;
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
     }
 
     [data-theme="dark"] {
-      --bg-color: #121212;
-      --card-bg: #1e1e1e;
-      --text-color: #e0e0e0;
-      --text-muted: #aaaaaa;
-      --title-color: #ffffff;
-      --nav-bg: rgba(18, 18, 18, 0.95);
-      --primary-color: #4d9fff;
-      --primary-hover: #1a82ff;
-      --border-color: #2c2c2c;
-      --input-border: #444444;
-      --editable-hover: #1e293b;
-      --tag-bg: #1e293b;
-      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
-      --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.5);
-      --danger-color: #ff6b6b;
-      --avatar-empty-bg: #2a2a2a;
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --input-bg: #0f172a;
+      --input-border: #475569;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; padding-top: 5rem; transition: background-color 0.3s, color 0.3s; }
+
+    /* 頂部導覽列 */
+    header { position: fixed; top: 0; left: 0; width: 100%; background: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 2.5rem; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .logo { font-size: 1.25rem; font-weight: 800; color: var(--text-main); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; font-size: 0.95rem; transition: color 0.2s; cursor: pointer; }
+    .nav-links a:hover, .nav-links a.active { color: var(--primary-color); }
     
-    html {
-      scroll-behavior: smooth;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      color: var(--text-color);
-      background-color: var(--bg-color);
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
+    .nav-right { display: flex; gap: 0.8rem; align-items: center; }
+    
+    .select-lang, .theme-toggle, .auth-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.85rem; cursor: pointer; outline: none; font-weight: 600; }
+    .auth-btn { background: var(--primary-color); color: white; border: none; display: flex; align-items: center; gap: 0.4rem; }
+    .auth-btn:hover { background: var(--primary-hover); }
+    .theme-toggle { font-size: 1rem; line-height: 1; }
 
-    body {
-      line-height: 1.6;
-    }
+    /* 主容器與區塊卡片 */
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; display: flex; flex-direction: column; gap: 2rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 2.5rem; box-shadow: var(--shadow-sm); }
+    
+    .section-title { font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: var(--nav-bg);
-      backdrop-filter: blur(5px);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      z-index: 1000;
-      transition: background 0.3s ease;
-    }
+    /* 個人資料與訪客模式 */
+    .profile-grid { display: flex; gap: 2.5rem; align-items: flex-start; }
+    .avatar-area { display: flex; flex-direction: column; align-items: center; gap: 1rem; flex-shrink: 0; }
+    
+    .avatar-box { width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--primary-color); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); background: var(--input-bg); overflow: hidden; box-shadow: var(--shadow-sm); position: relative; cursor: pointer; transition: transform 0.2s, filter 0.2s; }
+    .avatar-box:hover { transform: scale(1.03); filter: brightness(0.95); }
+    .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-box .plus-icon { font-size: 2rem; font-weight: 300; color: var(--primary-color); }
+    .avatar-box .upload-text { font-size: 0.8rem; color: var(--text-muted); }
+    
+    .upload-btn { background: var(--primary-color); color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: background 0.2s; }
+    .upload-btn:hover { background: var(--primary-hover); }
 
-    nav {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .profile-fields { flex-grow: 1; display: flex; flex-direction: column; gap: 1.2rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group label { font-weight: 600; font-size: 0.88rem; color: var(--text-main); }
+    .form-group input, .form-group textarea { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--input-border); border-radius: 10px; background: var(--input-bg); color: var(--text-main); font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--primary-color); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
 
-    .logo {
-      font-weight: bold;
-      font-size: 1.2rem;
-      color: var(--title-color);
-      text-decoration: none;
-    }
+    .visitor-bio { font-size: 1rem; color: var(--text-muted); line-height: 1.6; white-space: pre-wrap; }
 
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
+    /* 作品集卡片管理與顯示 */
+    .project-item { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem; position: relative; }
+    .project-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .project-title-label { font-weight: 700; font-size: 1rem; color: var(--text-main); }
+    .delete-project-btn { color: var(--danger-color); background: none; border: none; font-weight: 600; font-size: 0.88rem; cursor: pointer; }
+    .delete-project-btn:hover { color: var(--danger-hover); }
+    
+    .header-add-btn { background: var(--primary-color); color: white; border: none; padding: 0.4rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: background 0.2s; }
+    .header-add-btn:hover { background: var(--primary-hover); }
 
-    .nav-links {
-      display: flex;
-      list-style: none;
-      gap: 1.2rem;
-    }
+    .visitor-project-card { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; }
+    .visitor-project-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main); }
+    .visitor-project-card p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag { background: var(--border-color); color: var(--text-main); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600; }
 
-    .nav-links a {
-      text-decoration: none;
-      color: var(--text-muted);
-      font-weight: 500;
-      transition: color 0.2s ease;
-    }
+    .publish-section { text-align: center; }
+    .publish-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .publish-btn { background: var(--success-color); color: white; border: none; padding: 0.8rem 2.5rem; border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer; box-shadow: var(--shadow-sm); transition: background 0.2s; }
+    .publish-btn:hover { background: var(--success-hover); }
 
-    .nav-links a:hover {
-      color: var(--primary-color);
-    }
+    .back-home-btn { background: var(--border-color); color: var(--text-main); border: none; padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; text-decoration: none; display: inline-block; margin-bottom: 1rem; transition: background 0.2s; }
+    .back-home-btn:hover { filter: brightness(0.9); }
 
-    .icon-btn, .lang-select {
-      background: none;
-      border: 1px solid var(--input-border);
-      padding: 0.4rem 0.6rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: all 0.2s ease;
-    }
+    .creators-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .creator-card { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.2rem; text-decoration: none; color: var(--text-main); display: flex; align-items: center; gap: 1rem; transition: transform 0.2s, box-shadow 0.2s; }
+    .creator-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary-color); }
+    .creator-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; background: var(--border-color); }
+    .creator-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .creator-info p { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
 
-    .lang-select {
-      background-color: var(--card-bg);
-      color: var(--text-color);
-      outline: none;
-    }
+    .comments-section { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+    .comment-input-box { display: flex; flex-direction: column; gap: 0.8rem; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.2rem; }
+    .comment-list { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1rem; }
+    .comment-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem; }
+    .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-muted); }
+    .comment-author { font-weight: 700; color: var(--text-main); }
+    .comment-content { font-size: 0.95rem; color: var(--text-main); line-height: 1.4; white-space: pre-wrap; }
+    .comment-submit-btn { align-self: flex-end; background: var(--primary-color); color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .comment-submit-btn:hover { background: var(--primary-hover); }
 
-    .icon-btn:hover, .lang-select:hover {
-      background-color: var(--editable-hover);
-      border-color: var(--primary-color);
-      color: var(--title-color);
-    }
-
-    section {
-      padding: 6rem 2rem 4rem;
-      max-width: 1000px;
-      margin: 0 auto;
-      min-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .section-title {
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      text-align: center;
-      position: relative;
-      color: var(--title-color);
-    }
-
-    .section-title::after {
-      content: '';
-      display: block;
-      width: 50px;
-      height: 3px;
-      background-color: var(--primary-color);
-      margin: 0.5rem auto 0;
-      border-radius: 2px;
-    }
-
-    #hero {
-      text-align: center;
-      align-items: center;
-    }
-
-    /* === 大頭貼樣式與加號設計 === */
-    .avatar-container {
-      position: relative;
-      width: 160px;
-      height: 160px;
-      margin-bottom: 1.5rem;
-      cursor: pointer;
-      overflow: hidden;
-      border-radius: 50%;
-      box-shadow: var(--shadow-sm);
-      border: 3px dashed var(--input-border);
-      background-color: var(--avatar-empty-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: border-color 0.3s ease, background-color 0.3s ease;
-    }
-
-    .avatar-plus-icon {
-      font-size: 3.5rem;
-      color: var(--text-muted);
-      font-weight: 300;
-      line-height: 1;
-      user-select: none;
-      transition: transform 0.2s ease, color 0.2s ease;
-    }
-
-    .avatar-container:hover .avatar-plus-icon {
-      transform: scale(1.15);
-      color: var(--primary-color);
-    }
-
-    .avatar-container:hover {
-      border-color: var(--primary-color);
-    }
-
-    .avatar-container.has-image {
-      border-style: solid;
-      border-color: var(--card-bg);
-    }
-
-    .avatar-container.has-image .avatar-plus-icon {
-      display: none;
-    }
-
-    .avatar-preview {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: none;
-    }
-
-    .avatar-container.has-image .avatar-preview {
-      display: block;
-    }
-
-    .avatar-upload-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      font-weight: 500;
-      border-radius: 50%;
-    }
-
-    .avatar-container:hover .avatar-upload-overlay {
-      opacity: 1;
-    }
-
-    #avatar-input {
-      display: none;
-    }
-
-    .hero-name {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      color: var(--title-color);
-    }
-
-    .hero-bio {
-      font-size: 1.2rem;
-      color: var(--text-muted);
-      max-width: 600px;
-    }
-
-    .portfolio-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-top: 1rem;
-    }
-
-    .portfolio-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid var(--border-color);
-    }
-
-    .portfolio-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .editable {
-      outline: none;
-      border-radius: 4px;
-      padding: 2px 4px;
-      transition: background-color 0.2s ease, box-shadow 0.2s ease;
-      cursor: pointer;
-    }
-
-    .editable:hover {
-      background-color: var(--editable-hover);
-    }
-
-    .editable:focus {
-      background-color: var(--card-bg);
-      box-shadow: 0 0 0 2px var(--primary-color);
-      cursor: text;
-    }
-
-    .portfolio-card h3 {
-      font-size: 1.3rem;
-      margin-bottom: 0.8rem;
-      color: var(--title-color);
-    }
-
-    .portfolio-card p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      line-height: 1.5;
-      margin-bottom: 1rem;
-    }
-
-    .tags-container {
-      margin-top: auto;
-      padding-top: 1rem;
-      border-top: 1px dashed var(--border-color);
-    }
-
-    .tags-hint {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-
-    .tags-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .tag-pill {
-      background-color: var(--tag-bg);
-      color: var(--primary-color);
-      font-size: 0.8rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 20px;
-      font-weight: 500;
-    }
-
-    .tags-editable {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      min-height: 1.5em;
-    }
-
-    .contact-form {
-      background: var(--card-bg);
-      padding: 2.5rem;
-      border-radius: 12px;
-      box-shadow: var(--shadow-sm);
-      max-width: 600px;
-      width: 100%;
-      margin: 0 auto;
-      border: 1px solid var(--border-color);
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: var(--text-color);
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 0.8rem 1rem;
-      border: 1px solid var(--input-border);
-      border-radius: 6px;
-      font-size: 1rem;
-      font-family: inherit;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      transition: border-color 0.2s ease;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: var(--primary-color);
-    }
-
-    .error-msg {
-      color: var(--danger-color) !important;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-top: 0.4rem;
-      display: none;
-    }
-
-    input.invalid-input {
-      border-color: var(--danger-color) !important;
-    }
-
-    .submit-btn {
-      width: 100%;
-      background-color: var(--primary-color);
-      color: white;
-      padding: 0.9rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
-
-    .submit-btn:hover {
-      background-color: var(--primary-hover);
-    }
-
-    dialog.settings-modal {
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 2rem;
-      background: var(--card-bg);
-      color: var(--text-color);
-      box-shadow: var(--shadow-lg);
-      max-width: 450px;
-      width: 90%;
-      margin: auto;
-    }
-
-    dialog::backdrop {
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(3px);
-    }
-
-    .modal-header {
-      font-size: 1.4rem;
-      font-weight: bold;
-      margin-bottom: 1.5rem;
-      color: var(--title-color);
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.8rem;
-      margin-top: 1.5rem;
-    }
-
-    .btn-cancel {
-      background: var(--bg-color);
-      color: var(--text-color);
-      border: 1px solid var(--input-border);
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-
-    .btn-save {
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-
-    .btn-cancel:hover { background: var(--editable-hover); }
-    .btn-save:hover { background: var(--primary-hover); }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      border-top: 1px solid var(--border-color);
-    }
+    /* 登入提示畫面 */
+    .login-wall { text-align: center; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+    .login-wall h2 { font-size: 1.8rem; font-weight: 800; color: var(--text-main); }
+    .login-wall p { color: var(--text-muted); max-width: 400px; line-height: 1.5; }
+    .google-login-btn { background: #ffffff; color: #334155; border: 1px solid var(--border-color); padding: 0.8rem 1.8rem; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.8rem; box-shadow: var(--shadow-sm); transition: transform 0.2s, background 0.2s; }
+    .google-login-btn:hover { background: #f1f5f9; transform: translateY(-2px); }
 
     @media (max-width: 768px) {
-      .hero-name { font-size: 2rem; }
-      .hero-bio { font-size: 1rem; }
-      .contact-form { padding: 1.5rem; }
-      .nav-links { gap: 0.8rem; }
-      .nav-right { gap: 0.4rem; }
+      .profile-grid { flex-direction: column; align-items: center; text-align: center; }
+      header { padding: 0.8rem 1rem; }
+      .nav-links { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 導覽列 -->
+  <!-- 頂部導覽列 -->
   <header>
-    <nav>
-      <a href="#hero" class="logo">My Portfolio</a>
-      <div class="nav-right">
-        <ul class="nav-links">
-          <li><a href="#hero" data-i18n="nav_about">關於我</a></li>
-          <li><a href="#portfolio" data-i18n="nav_portfolio">作品集</a></li>
-          <li><a href="#contact" data-i18n="nav_contact">聯絡我</a></li>
-        </ul>
-        
-        <select id="lang-select" class="lang-select">
-          <option value="zh-TW">繁體中文</option>
-          <option value="zh-CN">简体中文</option>
-          <option value="en">English</option>
-          <option value="ja">日本語</option>
-          <option value="ko">한국어</option>
-        </select>
-
-        <button type="button" class="icon-btn" id="theme-toggle" title="切換深淺色模式">
-          <span id="theme-icon">🌙</span> <span id="theme-text" data-i18n="theme_dark">深色</span>
-        </button>
-        
-        <!-- 【關鍵修復 1】：純文字 + 👤 圖示，不帶容易被誤蓋的 class -->
-        <button type="button" class="icon-btn" id="open-settings">
-          👤 <span id="settings-btn-text">個人資料</span>
-        </button>
-      </div>
-    </nav>
+    <a href="index.html" class="logo">Portfolio Studio</a>
+    <div class="nav-links" id="navLinks">
+      <a href="#profile-section" class="active" data-i18n="nav_profile">個人資料</a>
+      <a href="#portfolio-section" data-i18n="nav_portfolio">作品集</a>
+      <a href="#community-section" data-i18n="nav_community">創作者牆</a>
+    </div>
+    <div class="nav-right" id="navRight">
+      <!-- 語言切換選單 -->
+      <select class="select-lang" id="langSelect">
+        <option value="zh-Hant">🇹🇼 繁體中文</option>
+        <option value="zh-Hans">🇨🇳 简体中文</option>
+        <option value="en">🇺🇸 English</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="ko">🇰🇷 한국어</option>
+      </select>
+      <button class="theme-toggle" id="themeToggleBtn">🌙</button>
+      <!-- 登入按鈕動態生成 -->
+    </div>
   </header>
 
-  <!-- 首頁 / 個人簡介 -->
-  <section id="hero">
-    <div class="avatar-container" id="avatar-container" title="點擊上傳頭像">
-      <span class="avatar-plus-icon">+</span>
-      <img src="" alt="大頭貼" class="avatar-preview" id="avatar-preview">
-      <div class="avatar-upload-overlay" data-i18n="avatar_overlay">更換頭像</div>
-    </div>
-    <input type="file" id="avatar-input" accept="image/*">
+  <div class="container" id="mainContainer"></div>
 
-    <h1 class="hero-name" id="display-name" data-i18n="default_name">你的名字</h1>
-    <p class="hero-bio" id="display-bio" data-i18n="default_bio">這裡寫上一句簡短又有力量的自我介紹，展示你的專業或個人風格。</p>
-  </section>
+  <!-- Firebase 邏輯與多國語言與互動程式碼 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-  <!-- 作品區 -->
-  <section id="portfolio">
-    <h2 class="section-title" data-i18n="title_portfolio">作品區</h2>
-    <div class="portfolio-grid">
-      
-      <article class="portfolio-card">
-        <h3 class="editable" contenteditable="true" data-key="project_title_1" data-i18n="project_1_title">作品名稱 A</h3>
-        <p class="editable" contenteditable="true" data-key="project_desc_1" data-i18n="project_1_desc">作品簡述與使用的技術。點擊此處可自由打字編輯。</p>
-        
-        <div class="tags-container">
-          <span class="tags-hint" data-i18n="tags_hint">🏷️ 標籤 (標籤之間請用空白鍵隔開)：</span>
-          <div class="tags-wrapper" id="tags-wrapper-1"></div>
-          <div class="editable tags-editable" contenteditable="true" data-key="project_tags_1" data-wrapper="tags-wrapper-1">HTML CSS JS</div>
-        </div>
-      </article>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBy4QfLSqCn8SldcGYyO98Bce-EzcOQ3EE",
+      authDomain: "hahahaha-d1a82.firebaseapp.com",
+      projectId: "hahahaha-d1a82",
+      storageBucket: "hahahaha-d1a82.firebasestorage.app",
+      messagingSenderId: "753041524466",
+      appId: "1:753041524466:web:adb0975449abc68bbf326b",
+      measurementId: "G-VX5K9PVMK3"
+    };
 
-      <article class="portfolio-card">
-        <h3 class="editable" contenteditable="true" data-key="project_title_2" data-i18n="project_2_title">作品名稱 B</h3>
-        <p class="editable" contenteditable="true" data-key="project_desc_2" data-i18n="project_2_desc">專案背景與獲得的成果。點擊此處可自由打字編輯。</p>
-        
-        <div class="tags-container">
-          <span class="tags-hint" data-i18n="tags_hint">🏷️ 標籤 (標籤之間請用空白鍵隔開)：</span>
-          <div class="tags-wrapper" id="tags-wrapper-2"></div>
-          <div class="editable tags-editable" contenteditable="true" data-key="project_tags_2" data-wrapper="tags-wrapper-2">Vue WebDesign API</div>
-        </div>
-      </article>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-      <article class="portfolio-card">
-        <h3 class="editable" contenteditable="true" data-key="project_title_3" data-i18n="project_3_title">作品名稱 C</h3>
-        <p class="editable" contenteditable="true" data-key="project_desc_3" data-i18n="project_3_desc">其他相關專案說明。點擊此處可自由打字編輯。</p>
-        
-        <div class="tags-container">
-          <span class="tags-hint" data-i18n="tags_hint">🏷️ 標籤 (標籤之間請用空白鍵隔開)：</span>
-          <div class="tags-wrapper" id="tags-wrapper-3"></div>
-          <div class="editable tags-editable" contenteditable="true" data-key="project_tags_3" data-wrapper="tags-wrapper-3">Python UI/UX</div>
-        </div>
-      </article>
-
-    </div>
-  </section>
-
-  <!-- 聯絡表單區 -->
-  <section id="contact">
-    <h2 class="section-title" data-i18n="title_contact">聯絡我</h2>
-    <form class="contact-form" action="#" method="POST" novalidate>
-      <div class="form-group">
-        <label for="name" data-i18n="form_name">姓名</label>
-        <input type="text" id="name" name="name" data-i18n-ph="placeholder_name" placeholder="請輸入你的姓名" required>
-      </div>
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="text" id="email" name="email" placeholder="example@gmail.com" required>
-        <small class="error-msg" id="email-error" data-i18n="email_error">⚠️ 請輸入正確的 Gmail 地址（例如：example@gmail.com）</small>
-      </div>
-      <div class="form-group">
-        <label for="message" data-i18n="form_message">留言內容</label>
-        <textarea id="message" name="message" rows="5" data-i18n-ph="placeholder_message" placeholder="請寫下你想跟我說的話..." required></textarea>
-      </div>
-      <button type="submit" class="submit-btn" data-i18n="btn_submit">傳送訊息</button>
-    </form>
-  </section>
-
-  <!-- 彈視窗 -->
-  <dialog class="settings-modal" id="settings-modal">
-    <div class="modal-header" data-i18n="modal_title">編輯個人資料</div>
-    <form id="settings-form" method="dialog">
-      <div class="form-group">
-        <label for="input-name" data-i18n="form_name">姓名</label>
-        <input type="text" id="input-name" data-i18n-ph="placeholder_name" placeholder="請輸入姓名" required>
-      </div>
-      <div class="form-group">
-        <label for="input-bio" data-i18n="form_bio">自我介紹</label>
-        <textarea id="input-bio" rows="4" data-i18n-ph="placeholder_bio" placeholder="請輸入一句自我介紹" required></textarea>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn-cancel" id="close-settings" data-i18n="btn_cancel">取消</button>
-        <button type="submit" class="btn-save" id="save-settings" data-i18n="btn_save">儲存變更</button>
-      </div>
-    </form>
-  </dialog>
-
-  <footer>
-    <p>&copy; 2026 Your Name. All rights reserved.</p>
-  </footer>
-
-  <script>
-    // 【關鍵修復 2】：多語言字典全數更新
+    // 多國語言字典 (i18n)
     const translations = {
-      'zh-TW': {
-        nav_about: '關於我', nav_portfolio: '作品集', nav_contact: '聯絡我',
-        theme_dark: '深色', theme_light: '淺色', btn_settings: '個人資料',
-        avatar_overlay: '更換頭像', default_name: '你的名字',
-        default_bio: '這裡寫上一句簡短又有力量的自我介紹，展示你的專業或個人風格。',
-        title_portfolio: '作品區', tags_hint: '🏷️ 標籤 (標籤之間請用空白鍵隔開)：',
-        project_1_title: '作品名稱 A', project_1_desc: '作品簡述與使用的技術。點擊此處可自由打字編輯。',
-        project_2_title: '作品名稱 B', project_2_desc: '專案背景與獲得的成果。點擊此處可自由打字編輯。',
-        project_3_title: '作品名稱 C', project_3_desc: '其他相關專案說明。點擊此處可自由打字編輯。',
-        title_contact: '聯絡我', form_name: '姓名', form_message: '留言內容', form_bio: '自我介紹',
-        placeholder_name: '請輸入你的姓名', placeholder_message: '請寫下你想跟我說的話...', placeholder_bio: '請輸入一句自我介紹',
-        email_error: '⚠️ 請輸入正確的 Gmail 地址（例如：example@gmail.com）',
-        btn_submit: '傳送訊息', modal_title: '編輯個人資料', btn_cancel: '取消', btn_save: '儲存變更'
+      "zh-Hant": {
+        nav_profile: "個人資料",
+        nav_portfolio: "作品集",
+        nav_community: "創作者牆",
+        login_title: "🚀 歡迎來到 Portfolio Studio",
+        login_desc: "請使用 Google 帳號登入。登入後無論更換手機或電腦，都能隨時隨地存取與編輯你專屬的作品集與雲端資料！",
+        login_btn: "使用 Google 帳號立即登入",
+        profile_title: "👤 個人資料設定",
+        avatar_text: "新增頭貼",
+        name_label: "您的姓名 / 暱稱",
+        name_placeholder: "例如：張小明",
+        bio_label: "個人自我介紹",
+        bio_placeholder: "簡述您的專業領域、熱情與經歷．．．",
+        portfolio_title: "📂 作品集卡片管理",
+        add_project_btn: "+ 新增作品",
+        proj_title_label: "作品標題",
+        proj_desc_label: "作品簡述",
+        proj_tags_label: "標籤 (用空格隔開)",
+        delete_proj: "刪除此項",
+        publish_title: "☁️ 儲存與發布",
+        publish_desc: "將您修改後的資料一鍵上傳至雲端資料庫，資料將立即公開同步！",
+        publish_btn: "🚀 一鍵同步至雲端",
+        my_comments_title: "💬 給我的留言板",
+        my_comments_desc: "這裡會顯示訪客在你的個人頁面上留下的所有訊息：",
+        community_title: "✨ 探索其他創作者",
+        community_desc: "點擊下方卡片即可拜訪其他夥伴的個人作品集：",
+        no_creators: "目前還沒有其他創作者上線。",
+        visitor_profile_title: "👤 創作者個人資料",
+        visitor_portfolio_title: "📂 個人作品集",
+        visitor_comments_title: "💬 訪客留言板",
+        comment_name_label: "你的稱呼",
+        comment_name_placeholder: "例如：路過的朋友",
+        comment_text_label: "留言內容",
+        comment_text_placeholder: "寫下你的鼓勵或交流想法...",
+        comment_submit_btn: "送出留言",
+        no_comments: "目前還沒有人留言，快來搶頭香！"
       },
-      'zh-CN': {
-        nav_about: '关于我', nav_portfolio: '作品集', nav_contact: '联系我',
-        theme_dark: '深色', theme_light: '浅色', btn_settings: '个人资料',
-        avatar_overlay: '更换头像', default_name: '你的名字',
-        default_bio: '这里写上一句简短又有力量的自我介绍，展示你的专业或个人风格。',
-        title_portfolio: '作品区', tags_hint: '🏷️ 标签 (标签之间请用空格隔开)：',
-        project_1_title: '作品名称 A', project_1_desc: '作品简述与使用的技术。点击此处可自由打字编辑。',
-        project_2_title: '作品名称 B', project_2_desc: '项目背景与获得的成果。点击此处可自由打字编辑。',
-        project_3_title: '作品名称 C', project_3_desc: '其他相关项目说明。点击此处可自由打字编辑。',
-        title_contact: '联系我', form_name: '姓名', form_message: '留言内容', form_bio: '自我介绍',
-        placeholder_name: '请输入你的姓名', placeholder_message: '请写下你想跟我说的话...', placeholder_bio: '请输入一句自我介绍',
-        email_error: '⚠️ 请输入正确的 Gmail 地址（例如：example@gmail.com）',
-        btn_submit: '发送消息', modal_title: '编辑个人资料', btn_cancel: '取消', btn_save: '保存变更'
+      "zh-Hans": {
+        nav_profile: "个人资料",
+        nav_portfolio: "作品集",
+        nav_community: "创作者墙",
+        login_title: "🚀 欢迎来到 Portfolio Studio",
+        login_desc: "请使用 Google 账号登录。登录后无论更换手机或电脑，都能随时随地访问与编辑你专属的作品集与云端数据！",
+        login_btn: "使用 Google 账号立即登录",
+        profile_title: "👤 个人资料设置",
+        avatar_text: "添加头像",
+        name_label: "您的姓名 / 昵称",
+        name_placeholder: "例如：张小明",
+        bio_label: "个人自我介绍",
+        bio_placeholder: "简述您的专业领域、热情与经历．．．",
+        portfolio_title: "📂 作品集卡片管理",
+        add_project_btn: "+ 新增作品",
+        proj_title_label: "作品标题",
+        proj_desc_label: "作品简述",
+        proj_tags_label: "标签 (用空格隔开)",
+        delete_proj: "删除此项",
+        publish_title: "☁️ 保存与发布",
+        publish_desc: "将您修改后的数据一键上传至云端数据库，数据将立即公开同步！",
+        publish_btn: "🚀 一键同步至云端",
+        my_comments_title: "💬 给我的留言板",
+        my_comments_desc: "这里会显示访客在你的个人页面上留下的所有信息：",
+        community_title: "✨ 探索其他创作者",
+        community_desc: "点击下方卡片即可拜访其他伙伴的个人作品集：",
+        no_creators: "目前还没有其他创作者上线。",
+        visitor_profile_title: "👤 创作者个人资料",
+        visitor_portfolio_title: "📂 个人作品集",
+        visitor_comments_title: "💬 访客留言板",
+        comment_name_label: "你的称呼",
+        comment_name_placeholder: "例如：路过的朋友",
+        comment_text_label: "留言内容",
+        comment_text_placeholder: "写下你的鼓励或交流想法...",
+        comment_submit_btn: "发送留言",
+        no_comments: "目前还没有人留言，快来抢沙发！"
       },
-      'en': {
-        nav_about: 'About Me', nav_portfolio: 'Portfolio', nav_contact: 'Contact',
-        theme_dark: 'Dark', theme_light: 'Light', btn_settings: 'Profile',
-        avatar_overlay: 'Change Avatar', default_name: 'Your Name',
-        default_bio: 'Write a short and powerful bio here to show your expertise and style.',
-        title_portfolio: 'Portfolio', tags_hint: '🏷️ Tags (Separate tags with spaces):',
-        project_1_title: 'Project A', project_1_desc: 'Project summary and technologies used. Click here to edit.',
-        project_2_title: 'Project B', project_2_desc: 'Project background and results. Click here to edit.',
-        project_3_title: 'Project C', project_3_desc: 'Other project descriptions. Click here to edit.',
-        title_contact: 'Contact Me', form_name: 'Name', form_message: 'Message', form_bio: 'Bio',
-        placeholder_name: 'Enter your name', placeholder_message: 'Write your message here...', placeholder_bio: 'Enter a short bio',
-        email_error: '⚠️ Please enter a valid Gmail address (e.g. example@gmail.com)',
-        btn_submit: 'Send Message', modal_title: 'Edit Profile', btn_cancel: 'Cancel', btn_save: 'Save Changes'
+      "en": {
+        nav_profile: "Profile",
+        nav_portfolio: "Portfolio",
+        nav_community: "Creators",
+        login_title: "🚀 Welcome to Portfolio Studio",
+        login_desc: "Sign in with Google to access and edit your portfolio and cloud data anywhere, anytime across devices!",
+        login_btn: "Sign in with Google",
+        profile_title: "👤 Profile Settings",
+        avatar_text: "Add Avatar",
+        name_label: "Your Name / Nickname",
+        name_placeholder: "e.g., John Doe",
+        bio_label: "Bio / Self-Introduction",
+        bio_placeholder: "Briefly describe your expertise, passion, and background...",
+        portfolio_title: "📂 Portfolio Management",
+        add_project_btn: "+ Add Project",
+        proj_title_label: "Project Title",
+        proj_desc_label: "Project Description",
+        proj_tags_label: "Tags (space separated)",
+        delete_proj: "Delete",
+        publish_title: "☁️ Save & Publish",
+        publish_desc: "Sync your changes to the cloud database instantly!",
+        publish_btn: "🚀 Sync to Cloud",
+        my_comments_title: "💬 My Message Board",
+        my_comments_desc: "Messages left by visitors on your personal page will appear here:",
+        community_title: "✨ Explore Creators",
+        community_desc: "Click cards below to visit other creators' portfolios:",
+        no_creators: "No other creators online yet.",
+        visitor_profile_title: "👤 Creator Profile",
+        visitor_portfolio_title: "📂 Portfolio",
+        visitor_comments_title: "💬 Visitor Message Board",
+        comment_name_label: "Your Name",
+        comment_name_placeholder: "e.g., Passing friend",
+        comment_text_label: "Message",
+        comment_text_placeholder: "Write your encouragement or feedback...",
+        comment_submit_btn: "Send Message",
+        no_comments: "No messages yet. Be the first to comment!"
       },
-      'ja': {
-        nav_about: '私について', nav_portfolio: '作品集', nav_contact: 'お問い合わせ',
-        theme_dark: 'ダーク', theme_light: 'ライト', btn_settings: 'プロフィール',
-        avatar_overlay: '画像を変更', default_name: 'あなたの名前',
-        default_bio: 'ここにあなたの専門性やスタイルを示す短い自己紹介を入力してください。',
-        title_portfolio: 'ポートフォリオ', tags_hint: '🏷️ タグ (スペース区切り):',
-        project_1_title: '作品 A', project_1_desc: '作品の概要と使用技術。クリックして直接編集できます。',
-        project_2_title: '作品 B', project_2_desc: 'プロジェクトの背景と成果。クリックして直接編集できます。',
-        project_3_title: '作品 C', project_3_desc: 'その他の関連プロジェクトの説明。クリックして編集できます。',
-        title_contact: 'お問い合わせ', form_name: 'お名前', form_message: 'メッセージ', form_bio: '自己紹介',
-        placeholder_name: 'お名前を入力してください', placeholder_message: 'メッセージを入力してください...', placeholder_bio: '自己紹介を入力してください',
-        email_error: '⚠️ 有効な Gmail アドレスを入力してください (例: example@gmail.com)',
-        btn_submit: '送信する', modal_title: 'プロフィール編集', btn_cancel: 'キャンセル', btn_save: '保存する'
+      "ja": {
+        nav_profile: "プロフィール",
+        nav_portfolio: "ポートフォリオ",
+        nav_community: "クリエイター",
+        login_title: "🚀 Portfolio Studio へようこそ",
+        login_desc: "Google アカウントでログインして、いつでもどこでもポートフォリオを編集・管理しましょう！",
+        login_btn: "Google でログイン",
+        profile_title: "👤 プロフィール設定",
+        avatar_text: "画像追加",
+        name_label: "お名前 / ニックネーム",
+        name_placeholder: "例：山田太郎",
+        bio_label: "自己紹介",
+        bio_placeholder: "専門分野や情熱について簡単に説明してください...",
+        portfolio_title: "📂 ポートフォリオ管理",
+        add_project_btn: "+ 作品を追加",
+        proj_title_label: "作品タイトル",
+        proj_desc_label: "作品概要",
+        proj_tags_label: "タグ (スペース区切り)",
+        delete_proj: "削除",
+        publish_title: "☁️ 保存して公開",
+        publish_desc: "変更内容をクラウドデータベースに即時同期します！",
+        publish_btn: "🚀 クラウドに同期",
+        my_comments_title: "💬 メッセージボード",
+        my_comments_desc: "あなたの個人ページに残された訪問者からのメッセージ：",
+        community_title: "✨ クリエイターを探索",
+        community_desc: "カードをクリックして他のクリエイターのポートフォリオを訪問：",
+        no_creators: "現在オンラインのクリエイターはいません。",
+        visitor_profile_title: "👤 クリエイターのプロフィール",
+        visitor_portfolio_title: "📂 ポートフォリオ",
+        visitor_comments_title: "💬 訪問者掲示板",
+        comment_name_label: "お名前",
+        comment_name_placeholder: "例：通りすがりの人",
+        comment_text_label: "メッセージ",
+        comment_text_placeholder: "応援や感想を書き込んでください...",
+        comment_submit_btn: "送信する",
+        no_comments: "まだメッセージはありません。最初のコメントを残しましょう！"
       },
-      'ko': {
-        nav_about: '소개', nav_portfolio: '포트폴리오', nav_contact: '문의하기',
-        theme_dark: '다크', theme_light: '라이트', btn_settings: '프로필',
-        avatar_overlay: '프로필 변경', default_name: '이름',
-        default_bio: '자신의 전문성과 스타일을 보여줄 수 있는 짧은 자기소개를 작성하세요.',
-        title_portfolio: '포트폴리오', tags_hint: '🏷️ 태그 (공백으로 구분):',
-        project_1_title: '프로젝트 A', project_1_desc: '프로젝트 개요 및 사용 기술. 클릭하여 직접 수정할 수 있습니다.',
-        project_2_title: '프로젝트 B', project_2_desc: '프로젝트 배경 및 성과. 클릭하여 직접 수정할 수 있습니다.',
-        project_3_title: '프로젝트 C', project_3_desc: '기타 관련 프로젝트 설명. 클릭하여 수정할 수 있습니다.',
-        title_contact: '문의하기', form_name: '이름', form_message: '메시지 내용', form_bio: '자기소개',
-        placeholder_name: '이름을 입력하세요', placeholder_message: '메시지를 작성해주세요...', placeholder_bio: '자기소개를 입력하세요',
-        email_error: '⚠️ 올바른 Gmail 주소를 입력하세요 (예: example@gmail.com)',
-        btn_submit: '메시지 전송', modal_title: '프로필 수정', btn_cancel: '취소', btn_save: '변경사항 저장'
+      "ko": {
+        nav_profile: "프로필",
+        nav_portfolio: "포트폴리오",
+        nav_community: "크리에이터",
+        login_title: "🚀 Portfolio Studio에 오신 것을 환영합니다",
+        login_desc: "Google 계정으로 로그인하여 언제 어디서나 포트폴리오와 클라우드 데이터를 관리하세요!",
+        login_btn: "Google로 로그인",
+        profile_title: "👤 프로필 설정",
+        avatar_text: "아바타 추가",
+        name_label: "이름 / 닉네임",
+        name_placeholder: "예: 홍길동",
+        bio_label: "자기소개",
+        bio_placeholder: "전문 분야와 경험을 간단히 적어주세요...",
+        portfolio_title: "📂 포트폴리오 관리",
+        add_project_btn: "+ 프로젝트 추가",
+        proj_title_label: "프로젝트 제목",
+        proj_desc_label: "프로젝트 설명",
+        proj_tags_label: "태그 (공백으로 구분)",
+        delete_proj: "삭제",
+        publish_title: "☁️ 저장 및 게시",
+        publish_desc: "변경 사항을 클라우드 데이터베이스에 즉시 동기화하세요!",
+        publish_btn: "🚀 클라우드에 동기화",
+        my_comments_title: "💬 내 방명록",
+        my_comments_desc: "개인 페이지에 방문자가 남긴 메시지가 여기에 표시됩니다:",
+        community_title: "✨ 다른 크리에이터 탐색",
+        community_desc: "아래 카드를 클릭하여 다른 파트너의 포트폴리오를 방문하세요:",
+        no_creators: "아직 다른 크리에이터가 없습니다.",
+        visitor_profile_title: "👤 크리에이터 프로필",
+        visitor_portfolio_title: "📂 포트폴리오",
+        visitor_comments_title: "💬 방문자 방명록",
+        comment_name_label: "이름",
+        comment_name_placeholder: "예: 지나가는 이",
+        comment_text_label: "메시지",
+        comment_text_placeholder: "응원이나 의견을 남겨주세요...",
+        comment_submit_btn: "메시지 보내기",
+        no_comments: "아직 댓글이 없습니다. 첫 댓글을 남겨보세요!"
       }
     };
 
-    const langSelect = document.getElementById('lang-select');
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-    const themeText = document.getElementById('theme-text');
+    let currentLang = localStorage.getItem('portfolio_lang') || 'zh-Hant';
+    const langSelect = document.getElementById('langSelect');
+    langSelect.value = currentLang;
 
-    const emailInput = document.getElementById('email');
-    const emailError = document.getElementById('email-error');
-    const contactForm = document.querySelector('.contact-form');
+    langSelect.addEventListener('change', (e) => {
+      currentLang = e.target.value;
+      localStorage.setItem('portfolio_lang', currentLang);
+      updatePageTexts();
+    });
 
-    const avatarContainer = document.getElementById('avatar-container');
-    const avatarInput = document.getElementById('avatar-input');
-    const avatarPreview = document.getElementById('avatar-preview');
+    function t(key) {
+      return translations[currentLang][key] || translations['zh-Hant'][key] || key;
+    }
 
-    const settingsModal = document.getElementById('settings-modal');
-    const openSettingsBtn = document.getElementById('open-settings');
-    const closeSettingsBtn = document.getElementById('close-settings');
-    const settingsForm = document.getElementById('settings-form');
-
-    const displayName = document.getElementById('display-name');
-    const displayBio = document.getElementById('display-bio');
-    const inputName = document.getElementById('input-name');
-    const inputBio = document.getElementById('input-bio');
-
-    function setLanguage(lang) {
-      const dict = translations[lang] || translations['zh-TW'];
-      
+    function updatePageTexts() {
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        const customKey = el.getAttribute('data-key');
-        if (!customKey || !localStorage.getItem(customKey)) {
-          if (dict[key]) el.textContent = dict[key];
+        if (translations[currentLang][key]) {
+          el.textContent = translations[currentLang][key];
         }
       });
-
-      // 強制寫入按鈕文字，避免任何覆蓋問題
-      const settingsBtnText = document.getElementById('settings-btn-text');
-      if (settingsBtnText && dict.btn_settings) {
-        settingsBtnText.textContent = dict.btn_settings;
-      }
-
-      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-        const key = el.getAttribute('data-i18n-ph');
-        if (dict[key]) el.placeholder = dict[key];
-      });
-
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      themeText.textContent = currentTheme === 'dark' ? dict.theme_light : dict.theme_dark;
-
-      localStorage.setItem('userLang', lang);
-      langSelect.value = lang;
     }
 
-    langSelect.addEventListener('change', (e) => setLanguage(e.target.value));
-
-    function setTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('userTheme', theme);
-
-      const lang = localStorage.getItem('userLang') || 'zh-TW';
-      const dict = translations[lang];
-
-      if (theme === 'dark') {
-        themeIcon.textContent = '☀️';
-        themeText.textContent = dict.theme_light;
+    // Dark Mode 切換
+    const themeBtn = document.getElementById('themeToggleBtn');
+    themeBtn.addEventListener('click', () => {
+      const html = document.documentElement;
+      if (html.getAttribute('data-theme') === 'light') {
+        html.setAttribute('data-theme', 'dark');
+        themeBtn.textContent = '☀️';
       } else {
-        themeIcon.textContent = '🌙';
-        themeText.textContent = dict.theme_dark;
+        html.setAttribute('data-theme', 'light');
+        themeBtn.textContent = '🌙';
       }
-    }
-
-    themeToggleBtn.addEventListener('click', () => {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
     });
 
-    function renderTagPills(editableElement) {
-      const wrapperId = editableElement.getAttribute('data-wrapper');
-      const wrapper = document.getElementById(wrapperId);
-      if (!wrapper) return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const profileId = urlParams.get('id');
+    const mainContainer = document.getElementById('mainContainer');
+    const navRight = document.getElementById('navRight');
 
-      const text = editableElement.textContent.trim();
-      const tags = text.split(/[\s\u3000]+/).filter(tag => tag.length > 0);
-      wrapper.innerHTML = tags.map(tag => `<span class="tag-pill">#${tag}</span>`).join('');
-    }
-
-    if (emailInput && emailError) {
-      const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
-
-      function checkEmailFormat() {
-        const value = emailInput.value.trim();
-        if (value !== '' && !gmailRegex.test(value)) {
-          emailError.style.display = 'block';
-          emailInput.classList.add('invalid-input');
-          return false;
+    // 監聽 Google 登入狀態
+    onAuthStateChanged(auth, async (user) => {
+      const currentThemeIcon = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+      themeBtn.textContent = currentThemeIcon;
+      
+      if (profileId) {
+        // 訪客模式
+        document.getElementById('navLinks').style.display = 'none';
+        loadVisitorProfile(profileId);
+      } else {
+        // 主頁 / 編輯模式
+        if (user) {
+          renderEditorMode(user.uid);
         } else {
-          emailError.style.display = 'none';
-          emailInput.classList.remove('invalid-input');
-          return true;
+          renderLoginWall();
         }
       }
+    });
 
-      emailInput.addEventListener('input', checkEmailFormat);
-      emailInput.addEventListener('keyup', checkEmailFormat);
-      emailInput.addEventListener('blur', checkEmailFormat);
+    function renderLoginWall() {
+      mainContainer.innerHTML = `
+        <div class="card login-wall">
+          <h2 data-i18n="login_title">${t('login_title')}</h2>
+          <p data-i18n="login_desc">${t('login_desc')}</p>
+          <button class="google-login-btn" id="googleLoginMainBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.12 0 9.82 0 12s.43 3.88 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+            <span data-i18n="login_btn">${t('login_btn')}</span>
+          </button>
+        </div>
+      `;
+      document.getElementById('googleLoginMainBtn').onclick = async () => {
+        try {
+          await signInWithPopup(auth, provider);
+        } catch (e) {
+          console.error("登入失敗", e);
+          alert("登入失敗，請稍後再試。");
+        }
+      };
+    }
 
-      if (contactForm) {
-        contactForm.addEventListener('submit', function (e) {
-          const isValid = checkEmailFormat();
-          if (!isValid || !emailInput.value.trim()) {
-            e.preventDefault();
-            emailError.style.display = 'block';
-            emailInput.classList.add('invalid-input');
-            emailInput.focus();
+    async function loadVisitorProfile(uId) {
+      try {
+        const docRef = doc(db, "users", uId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          let projectsHtml = '';
+          if (data.projects && data.projects.length > 0) {
+            data.projects.forEach(p => {
+              const tagsHtml = p.tags ? p.tags.split(' ').map(t => `<span class="tag">#${t}</span>`).join('') : '';
+              projectsHtml += `
+                <div class="visitor-project-card">
+                  <h3>${escapeHtml(p.title || '無標題')}</h3>
+                  <p>${escapeHtml(p.desc || '無簡述')}</p>
+                  <div class="tag-list">${tagsHtml}</div>
+                </div>
+              `;
+            });
+          } else {
+            projectsHtml = '<p style="color: var(--text-muted);">這位創作者尚未發表任何作品。</p>';
           }
+
+          let commentsHtml = '';
+          const comments = data.comments || [];
+          if (comments.length > 0) {
+            comments.forEach(c => {
+              const timeStr = c.createdAt ? new Date(c.createdAt).toLocaleString() : '';
+              commentsHtml += `
+                <div class="comment-item">
+                  <div class="comment-header">
+                    <span class="comment-author">💬 ${escapeHtml(c.name)}</span>
+                    <span>${timeStr}</span>
+                  </div>
+                  <div class="comment-content">${escapeHtml(c.text)}</div>
+                </div>
+              `;
+            });
+          } else {
+            commentsHtml = `<p style="color: var(--text-muted); font-size: 0.9rem;" id="noCommentsMsg" data-i18n="no_comments">${t('no_comments')}</p>`;
+          }
+
+          mainContainer.innerHTML = `
+            <div><a href="index.html" class="back-home-btn">← 返回我的主頁</a></div>
+            <div class="card">
+              <h2 class="section-title" data-i18n="visitor_profile_title">${t('visitor_profile_title')}</h2>
+              <div class="profile-grid">
+                <div class="avatar-area">
+                  <div class="avatar-box" style="cursor: default;">
+                    <img src="${data.avatar || 'https://via.placeholder.com/140'}" alt="頭貼">
+                  </div>
+                </div>
+                <div class="profile-fields">
+                  <div class="form-group">
+                    <label data-i18n="name_label">${t('name_label')}</label>
+                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">${escapeHtml(data.name || '無名')}</div>
+                  </div>
+                  <div class="form-group">
+                    <label data-i18n="bio_label">${t('bio_label')}</label>
+                    <div class="visitor-bio">${escapeHtml(data.bio || '這人很懶，什麼都沒有留下。')}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h2 class="section-title" data-i18n="visitor_portfolio_title">${t('visitor_portfolio_title')}</h2>
+              ${projectsHtml}
+            </div>
+
+            <div class="card">
+              <h2 class="section-title" data-i18n="visitor_comments_title">${t('visitor_comments_title')}</h2>
+              <div class="comments-section">
+                <div class="comment-input-box">
+                  <div class="form-group">
+                    <label data-i18n="comment_name_label">${t('comment_name_label')}</label>
+                    <input type="text" id="commentAuthor" placeholder="${t('comment_name_placeholder')}">
+                  </div>
+                  <div class="form-group">
+                    <label data-i18n="comment_text_label">${t('comment_text_label')}</label>
+                    <textarea id="commentText" placeholder="${t('comment_text_placeholder')}" style="min-height: 80px;"></textarea>
+                  </div>
+                  <button class="comment-submit-btn" id="submitCommentBtn" data-i18n="comment_submit_btn">${t('comment_submit_btn')}</button>
+                </div>
+                <div class="comment-list" id="commentListContainer">
+                  ${commentsHtml}
+                </div>
+              </div>
+            </div>
+          `;
+
+          document.getElementById('submitCommentBtn').addEventListener('click', async () => {
+            const author = document.getElementById('commentAuthor').value.trim();
+            const text = document.getElementById('commentText').value.trim();
+
+            if (!author || !text) {
+              alert('請填寫您的稱呼與留言內容！');
+              return;
+            }
+
+            const btn = document.getElementById('submitCommentBtn');
+            btn.disabled = true;
+            btn.textContent = '傳送中...';
+
+            const newComment = {
+              name: author,
+              text: text,
+              createdAt: new Date().toISOString()
+            };
+
+            try {
+              await updateDoc(docRef, {
+                comments: arrayUnion(newComment)
+              });
+
+              const listContainer = document.getElementById('commentListContainer');
+              const noMsg = document.getElementById('noCommentsMsg');
+              if (noMsg) noMsg.remove();
+
+              const timeStr = new Date(newComment.createdAt).toLocaleString();
+              const newDiv = document.createElement('div');
+              newDiv.className = 'comment-item';
+              newDiv.innerHTML = `
+                <div class="comment-header">
+                  <span class="comment-author">💬 ${escapeHtml(author)}</span>
+                  <span>${timeStr}</span>
+                </div>
+                <div class="comment-content">${escapeHtml(text)}</div>
+              `;
+              listContainer.prepend(newDiv);
+              document.getElementById('commentText').value = '';
+              alert('🎉 留言成功！');
+            } catch (err) {
+              console.error("留言失敗：", err);
+              alert('留言失敗。');
+            } finally {
+              btn.disabled = false;
+              btn.textContent = t('comment_submit_btn');
+            }
+          });
+
+        } else {
+          mainContainer.innerHTML = `<div class="card" style="text-align:center;"><p>找不到這位創作者的資料。</p><br><a href="index.html" class="back-home-btn">返回主頁</a></div>`;
+        }
+      } catch (e) {
+        console.error("讀取失敗：", e);
+        mainContainer.innerHTML = `<div class="card" style="text-align:center;"><p>載入資料時發生錯誤。</p><br><a href="index.html" class="back-home-btn">返回主頁</a></div>`;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    function renderEditorMode(currentUserId) {
+      const user = auth.currentUser;
+      const userName = user ? (user.displayName || '使用者') : '使用者';
+
+      mainContainer.innerHTML = `
+        <div class="card" id="profile-section">
+          <h2 class="section-title" data-i18n="profile_title">${t('profile_title')}</h2>
+          <div class="profile-grid">
+            <div class="avatar-area">
+              <div class="avatar-box" id="avatarBox" title="點擊更換頭貼">
+                <span class="plus-icon">+</span>
+                <span class="upload-text" data-i18n="avatar_text">${t('avatar_text')}</span>
+              </div>
+              <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+              <button class="upload-btn" onclick="document.getElementById('avatarInput').click()">
+                📷 選擇圖片
+              </button>
+            </div>
+            <div class="profile-fields">
+              <div class="form-group">
+                <label data-i18n="name_label">${t('name_label')}</label>
+                <input type="text" id="profileName" placeholder="${t('name_placeholder')}">
+              </div>
+              <div class="form-group">
+                <label data-i18n="bio_label">${t('bio_label')}</label>
+                <textarea id="profileBio" placeholder="${t('bio_placeholder')}"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="portfolio-section">
+          <div class="section-title">
+            <span data-i18n="portfolio_title">${t('portfolio_title')}</span>
+            <button class="header-add-btn" id="addProjectBtn" data-i18n="add_project_btn">${t('add_project_btn')}</button>
+          </div>
+          <div id="projectsContainer"></div>
+        </div>
+
+        <div class="card publish-section" id="publish-section">
+          <h2 class="section-title" style="justify-content: center;" data-i18n="publish_title">${t('publish_title')}</h2>
+          <p class="publish-desc" data-i18n="publish_desc">${t('publish_desc')}</p>
+          <button class="publish-btn" id="publishBtn" data-i18n="publish_btn">${t('publish_btn')}</button>
+        </div>
+
+        <div class="card" id="myCommentsSection">
+          <h2 class="section-title" data-i18n="my_comments_title">${t('my_comments_title')}</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;" data-i18n="my_comments_desc">${t('my_comments_desc')}</p>
+          <div class="comment-list" id="myCommentListContainer">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">載入中...</p>
+          </div>
+        </div>
+
+        <div class="card" id="community-section">
+          <h2 class="section-title" data-i18n="community_title">${t('community_title')}</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;" data-i18n="community_desc">${t('community_desc')}</p>
+          <div class="creators-grid" id="creatorsGrid">
+            <p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 1.5rem;" id="noCreatorsMsg" data-i18n="no_creators">${t('no_creators')}</p>
+          </div>
+        </div>
+      `;
+
+      initEditorLogic(currentUserId);
+    }
+
+    async function initEditorLogic(currentUserId) {
+      let profileNameInput = document.getElementById('profileName');
+      let profileBioInput = document.getElementById('profileBio');
+      let avatarBox = document.getElementById('avatarBox');
+      
+      let base64Avatar = "";
+      let projectsData = [
+        { title: "作品名稱 A", desc: "作品簡述與使用的技術。點擊此處可自由打字編輯。", tags: "HTML CSS JS" },
+        { title: "作品名稱 B", desc: "響應式網站設計與前端互動介面開發。", tags: "Vue Tailwind" },
+        { title: "作品名稱 C", desc: "後端 API 串接與資料庫系統架構實作。", tags: "NodeJS Firebase" }
+      ];
+
+      try {
+        const docRef = doc(db, "users", currentUserId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.name) profileNameInput.value = data.name;
+          if (data.bio) profileBioInput.value = data.bio;
+          if (data.avatar) {
+            base64Avatar = data.avatar;
+            avatarBox.innerHTML = `<img src="${base64Avatar}" alt="頭貼預覽">`;
+          }
+          if (data.projects && data.projects.length > 0) {
+            projectsData = data.projects;
+          }
+        }
+      } catch (e) {
+        console.error("讀取個人雲端資料失敗", e);
+      }
+
+      function saveDraftLocally() {
+        const draft = {
+          name: profileNameInput.value,
+          bio: profileBioInput.value,
+          avatar: base64Avatar,
+          projects: projectsData
+        };
+        localStorage.setItem('portfolio_draft_' + currentUserId, JSON.stringify(draft));
+      }
+
+      profileNameInput.addEventListener('input', saveDraftLocally);
+      profileBioInput.addEventListener('input', saveDraftLocally);
+
+      const projectsContainer = document.getElementById('projectsContainer');
+
+      function renderProjects() {
+        projectsContainer.innerHTML = '';
+        projectsData.forEach((proj, index) => {
+          const div = document.createElement('div');
+          div.className = 'project-item';
+          div.innerHTML = `
+            <div class="project-header-row">
+              <span class="project-title-label">作品 #${index + 1}</span>
+              <button class="delete-project-btn" onclick="window.removeProject(${index})">${t('delete_proj')}</button>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label>${t('proj_title_label')}</label>
+              <input type="text" value="${escapeHtml(proj.title)}" oninput="window.updateProjField(${index}, 'title', this.value)">
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label>${t('proj_desc_label')}</label>
+              <textarea rows="3" oninput="window.updateProjField(${index}, 'desc', this.value)">${escapeHtml(proj.desc)}</textarea>
+            </div>
+            <div class="form-group">
+              <label>${t('proj_tags_label')}</label>
+              <input type="text" value="${escapeHtml(proj.tags)}" oninput="window.updateProjField(${index}, 'tags', this.value)">
+            </div>
+          `;
+          projectsContainer.appendChild(div);
         });
       }
-    }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      setLanguage(localStorage.getItem('userLang') || 'zh-TW');
-      setTheme(localStorage.getItem('userTheme') || 'light');
+      window.updateProjField = (index, field, value) => {
+        projectsData[index][field] = value;
+        saveDraftLocally();
+      };
 
-      const savedName = localStorage.getItem('userName');
-      const savedBio = localStorage.getItem('userBio');
-      const savedAvatar = localStorage.getItem('userAvatar');
+      window.removeProject = (index) => {
+        projectsData.splice(index, 1);
+        renderProjects();
+        saveDraftLocally();
+      };
 
-      if (savedName) displayName.textContent = savedName;
-      if (savedBio) displayBio.textContent = savedBio;
-      
-      if (savedAvatar) {
-        avatarPreview.src = savedAvatar;
-        avatarContainer.classList.add('has-image');
-      } else {
-        avatarContainer.classList.remove('has-image');
+      document.getElementById('addProjectBtn').addEventListener('click', () => {
+        projectsData.push({ title: "", desc: "", tags: "" });
+        renderProjects();
+        saveDraftLocally();
+      });
+
+      renderProjects();
+
+      const avatarInput = document.getElementById('avatarInput');
+      avatarBox.addEventListener('click', () => {
+        avatarInput.click();
+      });
+
+      avatarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            base64Avatar = event.target.result;
+            avatarBox.innerHTML = `<img src="${base64Avatar}" alt="頭貼預覽">`;
+            saveDraftLocally();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      async function loadMyComments() {
+        const myCommentListContainer = document.getElementById('myCommentListContainer');
+        try {
+          const docRef = doc(db, "users", currentUserId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            const comments = data.comments || [];
+            if (comments.length > 0) {
+              let html = '';
+              comments.forEach(c => {
+                const timeStr = c.createdAt ? new Date(c.createdAt).toLocaleString() : '';
+                html += `
+                  <div class="comment-item">
+                    <div class="comment-header">
+                      <span class="comment-author">💬 ${escapeHtml(c.name)}</span>
+                      <span>${timeStr}</span>
+                    </div>
+                    <div class="comment-content">${escapeHtml(c.text)}</div>
+                  </div>
+                `;
+              });
+              myCommentListContainer.innerHTML = html;
+            } else {
+              myCommentListContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">目前還沒有人給你留言。</p>';
+            }
+          } else {
+            myCommentListContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">你尚未將資料同步至雲端。</p>';
+          }
+        } catch (e) {
+          console.error("載入留言失敗：", e);
+          myCommentListContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">載入留言時發生錯誤。</p>';
+        }
       }
 
-      document.querySelectorAll('.editable').forEach(element => {
-        const key = element.getAttribute('data-key');
-        const savedText = localStorage.getItem(key);
-        if (savedText) element.textContent = savedText;
-        if (element.classList.contains('tags-editable')) renderTagPills(element);
-      });
-    });
+      loadMyComments();
 
-    document.querySelectorAll('.editable').forEach(element => {
-      element.addEventListener('input', function() {
-        if (this.classList.contains('tags-editable')) renderTagPills(this);
-      });
+      async function loadCommunityCreators() {
+        const creatorsGrid = document.getElementById('creatorsGrid');
+        try {
+          const querySnapshot = await getDocs(collection(db, "users"));
+          let creatorsHtml = '';
+          let count = 0;
 
-      element.addEventListener('blur', function() {
-        const key = this.getAttribute('data-key');
-        localStorage.setItem(key, this.textContent.trim());
-        if (this.classList.contains('tags-editable')) renderTagPills(this);
-      });
-    });
+          querySnapshot.forEach((docSnap) => {
+            const uId = docSnap.id;
+            if (uId !== currentUserId) {
+              const data = docSnap.data();
+              const name = data.name || '無名創作者';
+              const bio = data.bio || '這人很懶，什麼都沒有留下。';
+              const avatar = data.avatar || 'https://via.placeholder.com/45';
 
-    avatarContainer.addEventListener('click', () => avatarInput.click());
+              creatorsHtml += `
+                <a href="?id=${uId}" class="creator-card">
+                  <img src="${avatar}" alt="${escapeHtml(name)}" class="creator-avatar">
+                  <div class="creator-info">
+                    <h4>${escapeHtml(name)}</h4>
+                    <p>${escapeHtml(bio)}</p>
+                  </div>
+                </a>
+              `;
+              count++;
+            }
+          });
 
-    avatarInput.addEventListener('change', function() {
-      const file = this.files[0];
-      if (file) {
-        if (file.size > 2 * 1024 * 1024) {
-          alert('圖片檔案過大，請選擇 2MB 以下的圖片！');
+          if (count > 0) {
+            creatorsGrid.innerHTML = creatorsHtml;
+          } else {
+            creatorsGrid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 1.5rem;" data-i18n="no_creators">${t('no_creators')}</p>`;
+          }
+        } catch (e) {
+          console.error("載入創作者牆失敗：", e);
+          creatorsGrid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 1.5rem;">載入創作者牆時發生錯誤。</p>';
+        }
+      }
+
+      loadCommunityCreators();
+
+      document.getElementById('publishBtn').addEventListener('click', async () => {
+        const name = profileNameInput.value.trim();
+        const bio = profileBioInput.value.trim();
+
+        if (!name) {
+          alert('請填寫您的姓名 / 暱稱！');
           return;
         }
 
-        const reader = new FileReader();
-        reader.addEventListener('load', function() {
-          const base64Image = this.result;
-          avatarPreview.src = base64Image;
-          avatarContainer.classList.add('has-image');
-          localStorage.setItem('userAvatar', base64Image);
-        });
-        reader.readAsDataURL(file);
-      }
-    });
+        const publishBtn = document.getElementById('publishBtn');
+        publishBtn.disabled = true;
+        publishBtn.textContent = '同步中...';
 
-    openSettingsBtn.addEventListener('click', () => {
-      inputName.value = displayName.textContent.trim();
-      inputBio.value = displayBio.textContent.trim();
-      settingsModal.showModal();
-    });
+        try {
+          const docRef = doc(db, "users", currentUserId);
+          const docSnap = await getDoc(docRef);
+          let existingComments = [];
+          if (docSnap.exists() && docSnap.data().comments) {
+            existingComments = docSnap.data().comments;
+          }
 
-    closeSettingsBtn.addEventListener('click', () => settingsModal.close());
+          await setDoc(docRef, {
+            name: name,
+            bio: bio,
+            avatar: base64Avatar,
+            projects: projectsData,
+            comments: existingComments,
+            updatedAt: new Date()
+          }, { merge: true });
 
-    settingsForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const newName = inputName.value.trim();
-      const newBio = inputBio.value.trim();
-
-      displayName.textContent = newName;
-      displayBio.textContent = newBio;
-
-      localStorage.setItem('userName', newName);
-      localStorage.setItem('userBio', newBio);
-
-      settingsModal.close();
-    });
+          alert('🎉 成功同步至雲端資料庫！');
+          loadCommunityCreators();
+        } catch (err) {
+          console.error("同步失敗：", err);
+          alert('同步至雲端失敗，請稍後再試。');
+        } finally {
+          publishBtn.disabled = false;
+          publishBtn.textContent = t('publish_btn');
+        }
+      });
+    }
   </script>
-
 </body>
 </html>
